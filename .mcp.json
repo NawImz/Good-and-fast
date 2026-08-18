@@ -1,0 +1,48 @@
+{
+  "mcpServers": {
+    "github": {
+      "type": "http",
+      "url": "https://api.githubcopilot.com/mcp/"
+    },
+    "figma": {
+      "type": "http",
+      "url": "https://mcp.figma.com/mcp"
+    },
+    "vercel": {
+      "type": "http",
+      "url": "https://mcp.vercel.com"
+    },
+    "netlify": {
+      "type": "http",
+      "url": "https://mcp.netlify.com/mcp"
+    },
+    "playwright": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@playwright/mcp",
+        "--browser",
+        "chromium",
+        "--headless",
+        "--isolated",
+        "--executable-path",
+        "${CLAUDE_PROJECT_DIR:-.}/scripts/chrome-launcher.sh"
+      ],
+      "env": {}
+    },
+    "chrome-devtools": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "chrome-devtools-mcp",
+        "--headless",
+        "--isolated",
+        "--executablePath",
+        "${CLAUDE_PROJECT_DIR:-.}/scripts/chrome-launcher.sh"
+      ],
+      "env": {}
+    }
+  }
+}

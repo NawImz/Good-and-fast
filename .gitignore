@@ -1,0 +1,20 @@
+node_modules/
+dist/
+.astro/
+.output/
+.vercel/
+.netlify/
+
+# Sorties des serveurs MCP navigateur
+.playwright-mcp/
+
+# Captures et rapports du harnais de QA
+qa/out/
+
+.env
+.env.*
+!.env.example
+.DS_Store
+
+# Réglages Claude Code personnels (le versionné est .claude/settings.json)
+.claude/settings.local.json
