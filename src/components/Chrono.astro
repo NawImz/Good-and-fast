@@ -3,10 +3,16 @@ import { Image } from "astro:assets";
 import { photos } from "../data/photos.mjs";
 
 /**
- * Le chrono s'appuie sur un fait rapporté par un client : trois minutes entre
- * la commande et le retrait. Les gestes ci-dessous sont donnés dans leur
- * ordre réel, sans durée individuelle — aucun découpage étape par étape n'a
- * été chronométré, et en inventer un serait un chiffre faux.
+ * Le minuteur — l'élément signature de la page.
+ *
+ * Il s'appuie sur un fait rapporté par un client : trois minutes entre la
+ * commande et le retrait. Les gestes sont donnés dans leur ordre réel, sans
+ * durée individuelle : aucun découpage étape par étape n'a été chronométré,
+ * et en inventer un serait un chiffre faux.
+ *
+ * La forme est un cadran, parce qu'un chrono est rond et que tout est rond
+ * ici. L'anneau est complet par défaut : sans JavaScript, le cadran affiche
+ * son état final au lieu de rester vide.
  */
 const gestes = [
   { titre: "Vous commandez", detail: "Au comptoir ou par téléphone, pour un retrait." },
@@ -14,50 +20,72 @@ const gestes = [
   { titre: "Le pain passe au four", detail: "Naan ou galette, chaud, jamais réchauffé deux fois." },
   { titre: "C'est emballé", detail: "Papier, aluminium, frites dans le sachet. Vous repartez." },
 ];
+
+const RAYON = 88;
+const CIRCONFERENCE = 2 * Math.PI * RAYON;
 ---
 
-<section class="relative overflow-hidden bg-rouge-nuit text-os">
+<section class="panneau panneau-lg relative overflow-hidden bg-rouge-nuit px-5 py-10 text-os md:px-12 md:py-14">
   <Image
     src={photos.comptoirBroche.src}
     alt=""
     aria-hidden="true"
-    widths={[780, 1360]}
+    widths={[720, 1360]}
     sizes="100vw"
     format="webp"
     quality={55}
     loading="lazy"
-    class="absolute inset-0 h-full w-full object-cover opacity-[0.14]"
+    class="absolute inset-0 h-full w-full object-cover opacity-[0.13]"
   />
 
-  <div class="relative mx-auto max-w-6xl px-5 py-16 md:px-8 md:py-24" data-anim-groupe>
-    <div class="md:flex md:items-end md:justify-between md:gap-10">
-      <div>
-        <h2 data-anim class="titre-section text-[0.72rem] text-frite">Le rythme de la maison</h2>
-        <p data-anim class="mt-4 max-w-lg text-[1.9rem] leading-[1.05] font-bold md:text-[2.5rem]">
-          Le meilleur temps jamais chronométré par un client.
-        </p>
+  <div class="relative md:flex md:items-center md:gap-14" data-anim-groupe>
+    <div data-anim="fondu" class="mx-auto w-[13.5rem] shrink-0 md:mx-0 md:w-[16rem]">
+      <div class="relative">
+        <svg viewBox="0 0 200 200" class="w-full -rotate-90" aria-hidden="true">
+          <circle cx="100" cy="100" r={RAYON} fill="none" stroke="currentColor" stroke-width="9" class="text-os/20" />
+          <circle
+            data-cadran
+            cx="100"
+            cy="100"
+            r={RAYON}
+            fill="none"
+            stroke="currentColor"
+            stroke-width="9"
+            stroke-linecap="round"
+            stroke-dasharray={CIRCONFERENCE.toFixed(2)}
+            stroke-dashoffset="0"
+            class="text-frite"
+          />
+        </svg>
+        <p
+          data-chrono="180"
+          class="chiffres absolute inset-0 grid place-items-center font-titre text-[3.2rem] font-bold text-frite md:text-[3.8rem]"
+        >3:00</p>
       </div>
-
-      <p
-        data-anim="fondu"
-        data-chrono="180"
-        class="chiffres mt-7 text-[4.5rem] leading-none font-bold tracking-[-0.03em] text-frite md:mt-0 md:text-[6rem]"
-      >3:00</p>
     </div>
 
-    <ol class="mt-11 grid gap-x-8 gap-y-7 sm:grid-cols-2 lg:grid-cols-4">
-      {gestes.map((g) => (
-        <li data-anim class="border-t border-os/25 pt-4">
-          <p class="text-[1.02rem] font-bold">{g.titre}</p>
-          <p class="mt-1.5 text-[0.9rem] leading-snug text-os/70">{g.detail}</p>
-        </li>
-      ))}
-    </ol>
+    <div class="mt-8 md:mt-0">
+      <p data-anim>
+        <span class="etiquette bg-frite text-encre">Le rythme de la maison</span>
+      </p>
+      <h2 data-anim class="titre mt-4 text-[1.9rem] md:text-[2.5rem]">
+        Le meilleur temps jamais chronométré par un client.
+      </h2>
 
-    <p data-anim class="mt-9 max-w-2xl text-[0.85rem] leading-relaxed text-os/60">
-      Trois minutes, c'est le meilleur temps rapporté dans un avis, pas une
-      promesse tenue à chaque service. Aux heures de pointe, il y a du monde
-      au comptoir — et on préfère le dire.
-    </p>
+      <ol class="mt-7 grid gap-2.5 sm:grid-cols-2">
+        {gestes.map((g) => (
+          <li data-anim class="rounded-carte bg-os/10 px-4 py-3.5">
+            <p class="font-titre text-[0.98rem] font-bold">{g.titre}</p>
+            <p class="mt-1 text-[0.84rem] leading-snug text-os/70">{g.detail}</p>
+          </li>
+        ))}
+      </ol>
+
+      <p data-anim class="mt-6 max-w-2xl text-[0.85rem] leading-relaxed text-os/60">
+        Trois minutes, c'est le meilleur temps rapporté dans un avis, pas une
+        promesse tenue à chaque service. Aux heures de pointe, il y a du monde
+        au comptoir — et on préfère le dire.
+      </p>
+    </div>
   </div>
 </section>

@@ -8,12 +8,12 @@ import { business, telHref, itineraireHref } from "../data/business.mjs";
      donc rien ne passe dessous. -->
 <div
   data-barre-appel
-  class="fixed inset-x-0 bottom-0 z-40 border-t border-os/15 bg-encre pb-[env(safe-area-inset-bottom,0px)] md:hidden"
+  class="fixed inset-x-0 bottom-0 z-40 rounded-t-panneau bg-encre pb-[env(safe-area-inset-bottom,0px)] shadow-[0_-10px_30px_-22px_rgb(26_21_18/0.6)] md:hidden"
 >
-  <div class="flex items-stretch gap-px">
+  <div class="flex items-stretch gap-1.5 p-1.5">
     <a
       href={telHref}
-      class="flex flex-1 items-center justify-center gap-2 bg-rouge px-4 py-4 font-bold text-os"
+      class="flex flex-1 items-center justify-center gap-2 rounded-pastille bg-rouge px-4 py-3.5 font-titre font-bold text-os"
     >
       <svg aria-hidden="true" viewBox="0 0 24 24" class="h-5 w-5 fill-current">
         <path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.46.57 3.6a1 1 0 0 1-.25 1z"/>
@@ -22,7 +22,7 @@ import { business, telHref, itineraireHref } from "../data/business.mjs";
     </a>
     <a
       href={itineraireHref}
-      class="flex items-center justify-center gap-2 px-5 py-4 text-[0.95rem] font-bold text-os"
+      class="flex items-center justify-center gap-2 rounded-pastille px-5 py-3.5 font-titre text-[0.95rem] font-bold text-os"
     >
       <svg aria-hidden="true" viewBox="0 0 24 24" class="h-5 w-5 fill-current">
         <path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7m0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5"/>

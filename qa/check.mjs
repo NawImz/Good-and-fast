@@ -109,7 +109,7 @@ const navigateur = await ouvrirNavigateur();
   const c = await navigateur.newContext();
   const p = await c.newPage();
   const tolerees = ["OpenStreetMap", "Épinay", "MaxiTacos", "JavaScript"];
-  for (const page of ["/", "/mentions-legales", "/donnees-personnelles"]) {
+  for (const page of ["/", "/donnees-personnelles"]) {
     await p.goto(base + page);
     const colles = await p.evaluate((tolerees) => {
       const trouves = [];

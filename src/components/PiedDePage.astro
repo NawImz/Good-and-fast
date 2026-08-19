@@ -2,53 +2,62 @@
 import { business, telHref, adresseLigne } from "../data/business.mjs";
 ---
 
-<footer class="bg-encre text-os">
-  <span class="bandeau" aria-hidden="true"></span>
-  <div class="mx-auto max-w-6xl px-5 py-12 md:px-8 md:py-16">
-    <div class="grid gap-9 md:grid-cols-[1.2fr_1fr_1fr]">
-      <div>
-        <p class="enseigne text-xl text-os">
-          Good&#8202;<span class="text-frite">&amp;</span>&#8202;Fast
-        </p>
-        <p class="script mt-2 text-[1.35rem] leading-none text-frite">Viande halal</p>
-        <p class="mt-4 text-[0.92rem] leading-relaxed text-os/70">
-          {business.baseline}
-        </p>
-      </div>
-
-      <div>
-        <h2 class="titre-section text-[0.65rem] text-os/50">Nous trouver</h2>
-        <address class="mt-3 text-[0.95rem] leading-relaxed not-italic text-os/80">
-          {business.adresse.rue}<br />
-          {business.adresse.codePostal} {business.adresse.ville}
-        </address>
-        <p class="mt-3">
-          <a href={telHref} class="chiffres inline-flex min-h-11 items-center text-[1.05rem] font-bold text-frite">
-            {business.telephone.affichage}
-          </a>
-        </p>
-      </div>
-
-      <div>
-        <h2 class="titre-section text-[0.65rem] text-os/50">Informations</h2>
-        <ul class="mt-1 text-[0.95rem]">
-          <li><a href="/mentions-legales" class="inline-flex min-h-11 items-center text-os/80 underline underline-offset-4 hover:text-os">Mentions légales</a></li>
-          <li><a href="/donnees-personnelles" class="inline-flex min-h-11 items-center text-os/80 underline underline-offset-4 hover:text-os">Données personnelles</a></li>
-        </ul>
-        {business.reseaux.length > 0 && (
-          <ul class="mt-4 flex gap-4 text-[0.95rem]">
-            {business.reseaux.map((r) => (
-              <li><a href={r.url} rel="noopener" class="inline-flex min-h-11 items-center text-os/80 underline underline-offset-4">{r.nom}</a></li>
-            ))}
-          </ul>
-        )}
-      </div>
+<footer class="panneau panneau-lg bg-encre px-5 py-9 text-os md:px-12 md:py-12">
+  <div class="grid gap-8 md:grid-cols-[1.3fr_1fr_1fr]">
+    <div>
+      <p class="enseigne text-lg text-os md:text-xl">
+        Good&#8202;<span class="text-frite">&amp;</span>&#8202;Fast
+      </p>
+      <p class="mt-3 max-w-xs text-[0.92rem] leading-relaxed text-os/70">
+        {business.baseline}
+      </p>
     </div>
 
-    <p class="mt-10 border-t border-os/15 pt-6 text-[0.8rem] text-os/50">
-      © {new Date().getFullYear()} {business.raisonSociale} — {adresseLigne}.
-      Ce site ne prend pas de commande en ligne : les commandes se font au
-      comptoir ou par téléphone.
-    </p>
+    <div>
+      <h2 class="font-titre text-[0.85rem] font-bold text-os/50">Nous trouver</h2>
+      <address class="mt-3 text-[0.95rem] leading-relaxed not-italic text-os/80">
+        {business.adresse.rue}<br />
+        {business.adresse.codePostal} {business.adresse.ville}
+      </address>
+      <p class="mt-2">
+        <a
+          href={telHref}
+          class="chiffres inline-flex min-h-11 items-center font-titre text-[1.1rem] font-bold text-frite"
+        >
+          {business.telephone.affichage}
+        </a>
+      </p>
+    </div>
+
+    <div>
+      <h2 class="font-titre text-[0.85rem] font-bold text-os/50">Informations</h2>
+      <ul class="mt-1">
+        <li>
+          <a
+            href="/donnees-personnelles"
+            class="inline-flex min-h-11 items-center text-[0.95rem] text-os/80 underline underline-offset-4 hover:text-os"
+          >
+            Données personnelles
+          </a>
+        </li>
+      </ul>
+      {business.reseaux.length > 0 && (
+        <ul class="mt-2 flex gap-4 text-[0.95rem]">
+          {business.reseaux.map((r) => (
+            <li>
+              <a href={r.url} rel="noopener" class="inline-flex min-h-11 items-center text-os/80 underline underline-offset-4">
+                {r.nom}
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
   </div>
+
+  <p class="mt-8 border-t border-os/15 pt-6 text-[0.8rem] text-os/50">
+    © {new Date().getFullYear()} {business.raisonSociale} — {adresseLigne}.
+    Ce site ne prend pas de commande en ligne : les commandes se font au
+    comptoir ou par téléphone.
+  </p>
 </footer>

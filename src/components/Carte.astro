@@ -1,73 +1,97 @@
 ---
 import { business } from "../data/business.mjs";
 import { prix } from "../lib/format.mjs";
+
+/**
+ * La carte en mosaïque.
+ *
+ * Les catégories n'ont pas toutes le même poids : les tacos et les sandwichs
+ * sont ce qu'on vient chercher, les steaks et les assiettes complètent. La
+ * grille le dit — six colonnes sur large écran, largeurs 3+3, 4+2, 2+2+2, ce
+ * qui remplit chaque rangée sans laisser de trou. Une grille de sept cartes
+ * identiques dirait l'inverse de ce qui se passe au comptoir.
+ *
+ * Les steaks prennent quatre colonnes : ce sont les intitulés les plus longs
+ * de la carte, et dans une carte étroite ils se cassaient en deux lignes.
+ *
+ * Ajouter une catégorie suppose de lui donner une largeur ici, en gardant des
+ * rangées qui totalisent six dans l'ordre du fichier de données.
+ */
+const LARGEURS = {
+  tacos: "lg:col-span-3",
+  sandwichs: "lg:col-span-3",
+  steaks: "lg:col-span-4",
+  naan: "lg:col-span-2",
+  assiettes: "lg:col-span-2",
+  burgers: "lg:col-span-2",
+  pizzas: "lg:col-span-2",
+};
 ---
 
-<section id="carte" class="mx-auto max-w-6xl px-5 py-14 md:px-8 md:py-24">
+<section id="carte" class="panneau panneau-lg px-5 py-9 md:px-12 md:py-14">
   <div class="max-w-2xl" data-anim-groupe>
-    <h2 data-anim class="titre-section text-[0.72rem] text-rouge">La carte</h2>
-    <p data-anim class="mt-4 text-[2rem] leading-[1.03] font-bold tracking-[-0.015em] md:text-[2.6rem]">
-      De 2,50 € à 9 €, tout est là.
+    <p data-anim>
+      <span class="etiquette bg-rouge text-os">La carte</span>
     </p>
+    <h2 data-anim class="titre mt-4 text-[2rem] md:text-[2.7rem]">
+      De 2,50 € à 9 €, tout est là.
+    </h2>
     <p data-anim class="mt-4 text-[1.02rem] leading-relaxed text-gris">
-      Relevé sur les panneaux affichés en salle. Les menus comprennent les
+      Relevée sur les panneaux affichés en salle. Les menus comprennent les
       frites et la boisson. {business.accueil.consigne}
     </p>
   </div>
 
-  <!-- Panneaux rectangulaires, pastille de catégorie sombre et prix en pastille
-       rouge : c'est le système d'affichage réel du comptoir, transposé. -->
-  <div class="mt-10 grid gap-5 md:mt-14 md:grid-cols-2 md:gap-6" data-anim-groupe>
+  <div class="mt-8 grid gap-3.5 md:mt-11 md:grid-cols-2 lg:grid-cols-6" data-anim-groupe>
     {business.carte.map((cat) => (
-      <article data-anim class="flex flex-col border border-encre/10 bg-panneau p-5 md:p-7">
+      <article
+        data-anim
+        class={`flex flex-col rounded-carte bg-brique p-5 md:p-6 ${LARGEURS[cat.id] ?? "lg:col-span-2"}`}
+      >
         <h3>
-          <span class="inline-block rounded-full bg-encre px-4 py-1.5 text-[0.95rem] font-bold text-os">
-            {cat.nom}
-          </span>
+          <span class="etiquette bg-encre text-os">{cat.nom}</span>
         </h3>
-        <p class="mt-4 text-[0.92rem] leading-snug text-gris">{cat.accroche}</p>
+        <p class="mt-3.5 text-[0.92rem] leading-snug text-gris">{cat.accroche}</p>
 
-        <ul class="mt-5 divide-y divide-encre/10">
+        <ul class="mt-4">
           {cat.items.map((it) => (
-            <li class="flex items-baseline gap-x-4 py-2.5">
-              {/* Nom et détail dans un même bloc : sinon un détail long pousse
-                  le prix à la ligne suivante et la colonne se désaligne. */}
-              <span class="min-w-0">
-                <span class="font-bold">{it.nom}</span>
-                {it.detail && <span class="ml-2 text-[0.85rem] text-gris">{it.detail}</span>}
-              </span>
-              <span class="ml-auto flex shrink-0 items-baseline gap-2">
-                {it.prix != null && (
-                  <span class="chiffres text-[0.95rem] font-bold text-rouge">
-                    {it.prefixe ?? ""}{prix(it.prix)}
-                  </span>
-                )}
-                {it.prixMenu != null && (
-                  <span class="chiffres rounded-full bg-rouge px-2.5 py-1 text-[0.8rem] font-bold text-os">
-                    Menu {prix(it.prixMenu)}
-                  </span>
-                )}
-                {it.prix == null && it.prixMenu == null && (
-                  <span class="text-[0.8rem] text-gris">prix en boutique</span>
-                )}
-              </span>
+            <li class="border-b border-encre/8 py-2.5 last:border-0">
+              <div class="flex items-center gap-x-3">
+                <span class="font-titre font-bold">{it.nom}</span>
+                <span class="ml-auto flex shrink-0 items-center gap-2">
+                  {it.prix != null && (
+                    <span class="chiffres font-titre text-[0.95rem] font-bold text-rouge">
+                      {it.prefixe ?? ""}{prix(it.prix)}
+                    </span>
+                  )}
+                  {it.prixMenu != null && (
+                    <span class="pastille-prix chiffres bg-rouge px-3 py-1.5 text-[0.8rem] text-os">
+                      Menu {prix(it.prixMenu)}
+                    </span>
+                  )}
+                  {it.prix == null && it.prixMenu == null && (
+                    <span class="text-[0.8rem] text-gris">prix en boutique</span>
+                  )}
+                </span>
+              </div>
+              {it.detail && <p class="mt-0.5 text-[0.85rem] leading-snug text-gris">{it.detail}</p>}
             </li>
           ))}
         </ul>
 
         {cat.choix && (
-          <div class="mt-5 space-y-3">
+          <div class="mt-4 space-y-3">
             {cat.choix.map((c) => (
               <div>
-                <p class="titre-section text-[0.65rem] text-gris">{c.titre}</p>
-                <p class="mt-1.5 text-[0.9rem] leading-snug">{c.valeurs.join(" · ")}</p>
+                <p class="font-titre text-[0.8rem] font-bold text-gris">{c.titre}</p>
+                <p class="mt-1 text-[0.9rem] leading-snug">{c.valeurs.join(" · ")}</p>
               </div>
             ))}
           </div>
         )}
 
         {cat.supplements && (
-          <ul class="mt-5 space-y-1.5 border-t border-encre/10 pt-4 text-[0.85rem] text-gris">
+          <ul class="mt-4 space-y-1.5 border-t border-encre/8 pt-3.5 text-[0.85rem] text-gris">
             {cat.supplements.map((s) => (
               <li class="flex gap-3">
                 <span>{s.nom}</span>
@@ -77,12 +101,12 @@ import { prix } from "../lib/format.mjs";
           </ul>
         )}
 
-        {cat.note && <p class="mt-5 text-[0.85rem] leading-snug text-gris">{cat.note}</p>}
+        {cat.note && <p class="mt-4 text-[0.85rem] leading-snug text-gris">{cat.note}</p>}
       </article>
     ))}
   </div>
 
-  <p class="mt-7 text-[0.85rem] text-gris">
+  <p class="mt-6 text-[0.85rem] text-gris">
     Prix relevés sur les panneaux affichés en salle. Seuls les prix affichés en
     boutique au moment de la commande font foi.
   </p>

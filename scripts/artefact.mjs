@@ -7,7 +7,7 @@
  * servi sans domaine et qu'aucune requête externe ne doit partir.
  *
  * Deux écarts assumés avec le site, et seulement deux :
- *  - les trois pages sont fusionnées en une seule, les liens du pied de page
+ *  - les pages sont fusionnées en une seule, les liens du pied de page
  *    deviennent des ancres — un fichier unique n'a pas de routeur ;
  *  - le <title> devient le nom du commerce, l'aperçu n'ayant pas de référencement
  *    à défendre.
@@ -62,18 +62,16 @@ let corps = index.match(/<body[^>]*>([\s\S]*)<\/body>/)[1];
 // Les balises <script> sont réinjectées à la main, dans l'ordre voulu.
 corps = corps.replace(/<script[^>]*>[\s\S]*?<\/script>/g, "");
 
-/* --- Les deux pages de texte, versées en sections ------------------------- */
-for (const [slug, titre] of [
-  ["mentions-legales", "Mentions légales"],
-  ["donnees-personnelles", "Données personnelles"],
-]) {
+/* --- Les pages de texte, versées en sections ------------------------------ */
+for (const [slug, titre] of [["donnees-personnelles", "Données personnelles"]]) {
   const page = await readFile(`dist/${slug}/index.html`, "utf8");
   let contenu = page.match(/<main[^>]*>([\s\S]*?)<\/main>/)[1];
   // Un seul h1 par document : les titres de page deviennent des h2, en gardant
   // leurs classes, donc leur échelle typographique.
   contenu = contenu.replace(/<h1 /, "<h2 ").replace(/<\/h1>/, "</h2>");
-  // Le lien de retour n'a plus de sens dans une page unique.
-  contenu = contenu.replace(/<p class="mt-12">[\s\S]*?<\/p>/, "");
+  // Dans une page unique, « retour à l'accueil » ne peut pas viser « / » :
+  // le lien sortirait de l'aperçu. Il vise le haut du document.
+  contenu = contenu.replaceAll('href="/"', 'href="#contenu"');
   corps = corps.replace(
     "</footer>",
     `</footer><section id="${slug}" aria-label="${titre}" class="mx-auto max-w-2xl px-5 py-12 md:px-8 md:py-20">${contenu}</section>`,
@@ -81,7 +79,6 @@ for (const [slug, titre] of [
 }
 
 // Les liens du pied de page pointent désormais vers les ancres locales.
-corps = corps.replaceAll('href="/mentions-legales"', 'href="#mentions-legales"');
 corps = corps.replaceAll('href="/donnees-personnelles"', 'href="#donnees-personnelles"');
 // `id="contenu"` ne doit rester qu'une fois dans le document.
 corps = corps.replace(/ id="contenu"/g, (m, i) => (corps.indexOf(' id="contenu"') === i ? m : ""));

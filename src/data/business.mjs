@@ -215,8 +215,16 @@ export const business = {
   ],
 
   /**
-   * Mentions légales — art. 6-III LCEN n° 2004-575. INCOMPLÈTES à ce stade :
-   * les champs `null` sont obligatoires avant toute mise en ligne.
+   * Mentions légales — art. 6-III LCEN n° 2004-575.
+   *
+   * LA PAGE A ÉTÉ RETIRÉE DU SITE À LA DEMANDE DU CLIENT, en phase de test.
+   * C'est sa décision ; l'obligation, elle, ne disparaît pas : identifier
+   * l'éditeur et l'hébergeur est requis dès la première publication publique,
+   * et l'absence est une infraction dès le premier jour.
+   *
+   * Le bloc est conservé ici pour que la remise en ligne reste triviale :
+   * remplir les champs, recréer `src/pages/mentions-legales.astro` et le lien
+   * du pied de page. Voir la liste « avant la mise en ligne » du README.
    */
   legal: {
     formeJuridique: null,

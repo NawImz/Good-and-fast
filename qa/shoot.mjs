@@ -6,7 +6,7 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import { servir, ouvrirNavigateur, rapport, TAILLES } from "./harnais.mjs";
 
-const PAGES = ["/", "/mentions-legales", "/donnees-personnelles"];
+const PAGES = ["/", "/donnees-personnelles"];
 const SORTIE = "qa/out";
 const POIDS_MAX_KO = 500;
 

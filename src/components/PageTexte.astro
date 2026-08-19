@@ -8,17 +8,21 @@ const { titre } = Astro.props;
 ---
 
 <Entete />
-<main id="contenu" class="mx-auto max-w-2xl px-5 py-12 md:px-8 md:py-20">
-  <h1 class="text-[2.1rem] leading-[1.05] font-bold tracking-[-0.015em] md:text-[2.8rem]">
-    {titre}
-  </h1>
-  <span class="bandeau mt-6 w-24" aria-hidden="true"></span>
-  <div class="mt-8 space-y-8 text-[1rem] leading-relaxed text-gris">
-    <slot />
-  </div>
-  <p class="mt-12">
-    <a href="/" class="inline-flex min-h-11 items-center font-bold text-rouge underline underline-offset-4">Retour à l'accueil</a>
-  </p>
+<main class="mx-auto flex max-w-3xl flex-col gap-3.5 px-4 pb-6 md:gap-5 md:px-6 md:pb-10">
+  <article id="contenu" class="panneau panneau-lg px-5 py-9 md:px-12 md:py-14">
+    <h1 class="titre text-[2.1rem] md:text-[2.8rem]">{titre}</h1>
+    <div class="mt-7 space-y-8 text-[1rem] leading-relaxed text-gris">
+      <slot />
+    </div>
+    <p class="mt-10">
+      <a
+        href="/"
+        class="inline-flex min-h-[3rem] items-center rounded-pastille bg-rouge px-6 font-titre font-bold text-os"
+      >
+        Retour à l'accueil
+      </a>
+    </p>
+  </article>
+  <PiedDePage />
 </main>
-<PiedDePage />
 <BarreAppel />

@@ -4,73 +4,64 @@ import { business, telHref, itineraireHref } from "../data/business.mjs";
 import { photos } from "../data/photos.mjs";
 ---
 
-<section id="contenu" class="relative">
-  <!-- Écran partagé : la photo touche le bord droit de la fenêtre, sans marge
-       négative — le texte est calé sur la colonne du reste du site par un
-       padding calculé, ce qui ne peut jamais provoquer de débordement. -->
-  <div class="md:grid md:min-h-[78vh] md:grid-cols-[1fr_1.05fr] md:items-stretch">
-    <!-- Sur mobile la photo passe en premier : dans ce métier, c'est elle qui
-         donne faim. Le titre et le bouton d'appel restent au-dessus de la
-         ligne de flottaison à 390 px. -->
-    <div data-hero-image class="order-1 overflow-hidden md:order-2 md:h-full">
+<!--
+  Le premier écran est une assiette.
+
+  La photo est cadrée en cercle et déborde du panneau : dans ce commerce, tout
+  ce qui se vend est rond — le naan, la pizza, l'assiette, la tortilla. Le
+  cercle n'est pas un effet de style, c'est la forme du produit, et il évite le
+  hero coupé en deux qu'on retrouve sur n'importe quel site.
+-->
+<section id="contenu" class="panneau panneau-lg relative overflow-hidden px-5 pt-8 pb-9 md:px-12 md:py-14">
+  <div class="md:flex md:items-center md:gap-12 lg:gap-16" data-anim-groupe>
+    <div data-hero-image class="mx-auto w-[86%] max-w-[22rem] shrink-0 md:mx-0 md:w-[38%] md:max-w-none">
       <Image
         src={photos.grecFrites.src}
         alt={photos.grecFrites.alt}
-        widths={[390, 780, 1170]}
-        sizes="(min-width: 48rem) 52vw, 100vw"
+        widths={[360, 720, 1080]}
+        sizes="(min-width: 48rem) 38vw, 86vw"
         format="webp"
-        quality={72}
+        quality={74}
         loading="eager"
         fetchpriority="high"
-        class="aspect-[16/11] h-full w-full object-cover object-[50%_62%] md:aspect-auto"
+        class="aspect-square w-full rounded-pastille object-cover object-[46%_58%]"
       />
     </div>
 
-    <div
-      class="order-2 flex flex-col justify-center px-5 pt-7 pb-9 md:order-1 md:py-16 md:pr-10 md:pl-[max(2rem,calc((100vw-72rem)/2))]"
-      data-anim-groupe
-    >
-      <p data-anim class="enseigne text-[0.7rem] text-gris md:text-xs">
-        Épinay-sur-Seine · Avenue de la République
-      </p>
-
-      <h1
-        data-anim
-        class="mt-3 text-[2.35rem] leading-[0.95] font-bold tracking-[-0.02em] md:text-[3.4rem]"
-      >
+    <div class="mt-7 md:mt-0">
+      <h1 data-anim class="titre text-[2.5rem] md:text-[3.2rem] lg:text-[3.7rem]">
         Coupé minute.<br />
         <span class="text-rouge">Servi en trois minutes.</span>
       </h1>
 
-      <p data-anim class="mt-4 max-w-md text-[1.02rem] leading-relaxed text-gris md:text-[1.1rem]">
+      <p data-anim class="mt-5 max-w-md text-[1.05rem] leading-relaxed text-gris">
         Grec tranché à la broche quand vous commandez, pain naan pétri du jour,
         frites qui sortent du bain.
       </p>
 
-      <p data-anim class="mt-5 flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[0.9rem] text-gris">
-        <span class="chiffres font-bold text-encre">{business.note.valeur.toLocaleString("fr-FR")}/5</span>
-        <span aria-hidden="true" class="text-gris-clair">·</span>
-        <span class="chiffres">{business.note.nombre} avis {business.note.source}</span>
-        <span aria-hidden="true" class="text-gris-clair">·</span>
-        <span class="script text-[1.15rem] leading-none text-rouge">Viande halal</span>
-      </p>
+      <div data-anim class="mt-6 flex flex-wrap items-center gap-2.5">
+        <span class="etiquette bg-brique text-encre">
+          <span class="chiffres">{business.note.valeur.toLocaleString("fr-FR")}/5</span>
+          <span class="text-gris">· {business.note.nombre} avis {business.note.source}</span>
+        </span>
+        <!-- Seul emploi du script de la vitrine dans toute la page. -->
+        <span class="script text-[1.35rem] leading-none text-rouge">Viande halal</span>
+      </div>
 
-      <div data-anim class="mt-6 flex flex-wrap gap-3">
+      <div data-anim class="mt-7 flex flex-wrap gap-3">
         <a
           href={telHref}
-          class="inline-flex min-h-[3rem] items-center bg-rouge px-6 text-[1.02rem] font-bold text-os transition-transform duration-150 hover:-translate-y-0.5"
+          class="inline-flex min-h-[3.25rem] items-center rounded-pastille bg-rouge px-7 font-titre text-[1.05rem] font-bold text-os transition-transform duration-150 hover:-translate-y-0.5"
         >
           Appeler {business.telephone.affichage}
         </a>
         <a
           href={itineraireHref}
-          class="inline-flex min-h-[3rem] items-center border-2 border-encre px-6 text-[1.02rem] font-bold text-encre transition-colors duration-150 hover:bg-encre hover:text-os"
+          class="inline-flex min-h-[3.25rem] items-center rounded-pastille border-2 border-encre px-7 font-titre text-[1.05rem] font-bold text-encre transition-colors duration-150 hover:bg-encre hover:text-os"
         >
           Itinéraire
         </a>
       </div>
     </div>
   </div>
-
-  <span class="bandeau" aria-hidden="true"></span>
 </section>

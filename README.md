@@ -67,14 +67,46 @@ donnent des valeurs boueuses (le carrelage rouge y ressort à `#8D5D66`).
   sur les fonds sombres, où il passe AA (5,76:1 sur `--rouge-nuit`).
 - Interdit et documenté dans `global.css` : `--rouge` sur `--encre` (2,97:1).
 
-**Typographie.** Le lettrage de l'enseigne est un grotesque **Bold** — pas
-Black — à chasse normale et à approche très large : c'est l'espacement qui fait
-la signature, pas la graisse. D'où *Familjen Grotesk* limitée à 700, et la
-classe `.enseigne` qui reprend l'approche. *Yellowtail* est l'écho du script
-peint sur les vitrines (« Viande Halal ») ; il est réservé à deux ou trois mots.
+**Tout est rond, ici.** Le naan est rond, la pizza est ronde, l'assiette est
+ronde, la tortilla est un cercle, le sandwich est un tube, la broche est un
+cylindre qui tourne. Le rond n'est donc pas une tendance empruntée, c'est la
+forme du produit — et c'est ce qui a remplacé la première version, coupée en
+deux et à angles vifs comme n'importe quel site d'agence.
 
-**L'ornement, un seul.** Le bandeau rouge plein qui court au-dessus des
-vitrines. Il sépare les sections et rien d'autre.
+- Les photos de plats sont cadrées **en cercle**, comme des assiettes vues de
+  dessus.
+- Les prix sont des **pastilles**, à l'image de l'étiquette « 10 € » collée sur
+  l'affiche des pizzas en salle.
+- Les rayons suivent une échelle (`--radius-chip` à `--radius-panneau-lg`), pas
+  un rayon unique appliqué partout : les grandes surfaces sont franchement
+  rondes, les petites restent nettes. C'est ce contraste qui empêche le rond de
+  virer au décoratif.
+
+**L'ornement, un seul : le panneau posé sur le mur.** Les sections ne sont plus
+des bandes pleine largeur collées les unes aux autres, mais des panneaux
+arrondis avec du mur visible entre eux — le dispositif réel du comptoir, des
+panneaux de papier crème montés sur un mur carrelé. Le bandeau rouge de la
+version précédente a été retiré en même temps que celui-ci est arrivé : un seul
+ornement à la fois.
+
+**L'élément signature : le minuteur.** La section « trois minutes » est un
+cadran qui se remplit, pas une bande avec un nombre. Un chrono est rond, et
+c'est le seul fait que ce commerce possède en propre. L'anneau est complet dans
+le HTML : sans JavaScript, le cadran montre son état final au lieu de rester
+vide.
+
+**Typographie.** Deux rôles, deux familles, plus un accent.
+
+- **Gabarito** pour les énoncés : géométrique à formes rondes et terminaisons
+  douces. Retenue après comparaison sur planche avec Bricolage Grotesque,
+  Baloo 2 et Familjen Grotesk — c'est la seule qui portait le rond sans virer
+  au menu pour enfants.
+- **Familjen Grotesk** pour le texte courant, volontairement discrète. Elle
+  garde le squelette des lettres en relief de la devanture (G à ergot, O ovale,
+  terminaisons horizontales) et ne dépasse pas 700, l'enseigne réelle étant
+  Bold et non Black.
+- **Yellowtail**, écho du script peint sur les vitrines, employé **une seule
+  fois** dans toute la page — sur « Viande halal », dans le premier écran.
 
 **Le favicon** est l'esperluette de l'enseigne, vectorisée depuis la photo avec
 potrace (`scripts/dev/trace-esperluette.mjs`) plutôt que redessinée, puis
@@ -149,7 +181,8 @@ scripts/dev/             outils ponctuels (palette, vectorisation du logo)
 Les captures sont à **regarder**, pas seulement à produire : plusieurs défauts
 corrigés ici (prix qui passaient à la ligne, photo qui ne remplissait pas sa
 colonne, titre annonçant trois remarques pour quatre blocs, teinte de brique
-qui virait au rosé une fois éclaircie) n'étaient visibles que comme ça.
+qui virait au rosé une fois éclaircie, noms de plats cassés en deux dans les
+cartes étroites, trou dans la mosaïque) n'étaient visibles que comme ça.
 
 ---
 
@@ -158,10 +191,15 @@ qui virait au rosé une fois éclaircie) n'étaient visibles que comme ça.
 Ces points sont **obligatoires** ; le premier est une infraction dès le premier
 jour de publication.
 
-1. **Mentions légales** — `legal` dans `business.mjs` : forme juridique, SIRET,
-   TVA, directeur de la publication, capital, **et l'hébergeur** (raison
-   sociale + adresse). Art. 6-III LCEN n° 2004-575. La page affiche
-   aujourd'hui un avertissement et marque chaque champ manquant.
+1. **Remettre les mentions légales.** La page a été **retirée à la demande du
+   client**, en phase de test. C'est sa décision ; l'obligation, elle, ne
+   disparaît pas : l'article 6-III de la LCEN n° 2004-575 impose d'identifier
+   l'éditeur et l'hébergeur, et l'absence est une infraction dès le premier
+   jour de publication publique. Le bloc `legal` est conservé dans
+   `business.mjs` pour que la remise en ligne reste triviale : remplir les
+   champs (forme juridique, SIRET, TVA, directeur de la publication, capital,
+   **et l'hébergeur** avec sa raison sociale et son adresse), recréer
+   `src/pages/mentions-legales.astro` et le lien du pied de page.
 2. **Nom de domaine** — `site` dans `business.mjs` vaut
    `https://good-and-fast.fr`, qui est un **placeholder** : il alimente les
    URL canoniques et le sitemap.

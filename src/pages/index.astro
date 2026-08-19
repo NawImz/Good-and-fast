@@ -16,14 +16,16 @@ import BarreAppel from "../components/BarreAppel.astro";
   description="Kebab, tacos, cheese naan et pizzas halal à Épinay-sur-Seine (93800). Viande coupée à la commande, de 2,50 € à 9 €, ouvert jusqu'à minuit."
 >
   <Entete />
-  <main>
+  <!-- Les sections sont des panneaux posés sur le mur, avec du mur entre eux :
+       le contraire des bandes pleine largeur collées les unes aux autres. -->
+  <main class="mx-auto flex max-w-6xl flex-col gap-3.5 px-4 pb-6 md:gap-5 md:px-6 md:pb-10">
     <Hero />
     <Signature />
     <Chrono />
     <Carte />
     <Avis />
     <Infos />
+    <PiedDePage />
   </main>
-  <PiedDePage />
   <BarreAppel />
 </Base>

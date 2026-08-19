@@ -12,55 +12,54 @@ const { valeur, nombre, source } = business.note;
 const pourcentage = (valeur / 5) * 100;
 ---
 
-<!-- Les avis restent sur le mur : les panneaux de papier sont réservés à la
-     carte, comme au comptoir. -->
-<section id="avis" class="border-y border-encre/15">
-  <div class="mx-auto max-w-6xl px-5 py-14 md:px-8 md:py-24" data-anim-groupe>
+<section id="avis" class="panneau panneau-lg px-5 py-9 md:px-12 md:py-14">
+  <div data-anim-groupe>
     <div class="md:flex md:items-end md:justify-between md:gap-12">
       <div class="max-w-xl">
-        <h2 data-anim class="titre-section text-[0.72rem] text-rouge">Ce qu'en disent les clients</h2>
-        <p data-anim class="mt-4 text-[2rem] leading-[1.03] font-bold tracking-[-0.015em] md:text-[2.6rem]">
-          390 avis, et toujours les mêmes remarques.
+        <p data-anim>
+          <span class="etiquette bg-rouge text-os">Ce qu'en disent les clients</span>
         </p>
+        <h2 data-anim class="titre mt-4 text-[2rem] md:text-[2.7rem]">
+          390 avis, et toujours les mêmes remarques.
+        </h2>
       </div>
 
-      <div data-anim class="mt-7 shrink-0 md:mt-0">
-        <p class="flex items-baseline gap-2">
-          <span class="chiffres text-[3.2rem] leading-none font-bold">
+      <!-- La note tient dans une pastille, comme les étiquettes de prix. -->
+      <div data-anim class="mt-6 shrink-0 md:mt-0">
+        <div class="inline-flex items-center gap-4 rounded-pastille bg-brique px-6 py-4">
+          <p class="chiffres font-titre text-[2.6rem] leading-none font-bold">
             {valeur.toLocaleString("fr-FR")}
-          </span>
-          <span class="text-[1.1rem] text-gris">/ 5</span>
-        </p>
-
-        <div class="mt-2 flex items-center gap-2">
-          <span
-            class="relative inline-block leading-none"
-            role="img"
-            aria-label={`Note de ${valeur.toLocaleString("fr-FR")} sur 5`}
-          >
-            <span aria-hidden="true" class="text-[1.15rem] tracking-[0.12em] text-gris-clair">★★★★★</span>
+          </p>
+          <div>
             <span
-              aria-hidden="true"
-              class="absolute inset-0 overflow-hidden text-[1.15rem] tracking-[0.12em] whitespace-nowrap text-rouge"
-              style={`width:${pourcentage}%`}
-            >★★★★★</span>
-          </span>
-          <span class="chiffres text-[0.85rem] text-gris">{nombre} avis {source}</span>
+              class="relative inline-block leading-none"
+              role="img"
+              aria-label={`Note de ${valeur.toLocaleString("fr-FR")} sur 5`}
+            >
+              <span aria-hidden="true" class="text-[1.05rem] tracking-[0.1em] text-gris-clair">★★★★★</span>
+              <span
+                aria-hidden="true"
+                class="absolute inset-0 overflow-hidden text-[1.05rem] tracking-[0.1em] whitespace-nowrap text-rouge"
+                style={`width:${pourcentage}%`}
+              >★★★★★</span>
+            </span>
+            <p class="chiffres mt-1 text-[0.82rem] text-gris">{nombre} avis {source}</p>
+          </div>
         </div>
       </div>
     </div>
 
-    <ul class="mt-11 grid gap-x-8 gap-y-8 sm:grid-cols-2 lg:grid-cols-4">
+    <ul class="mt-9 grid gap-3.5 sm:grid-cols-2 lg:grid-cols-4">
       {business.themesAvis.map((t) => (
-        <li data-anim class="border-t-2 border-rouge pt-4">
-          <p class="text-[1.05rem] leading-snug font-bold">{t.titre}</p>
-          <p class="mt-2 text-[0.92rem] leading-relaxed text-gris">{t.texte}</p>
+        <li data-anim class="rounded-carte bg-brique px-5 py-5">
+          <p class="font-titre text-[1.05rem] leading-snug font-bold">{t.titre}</p>
+          <p class="mt-2 text-[0.9rem] leading-relaxed text-gris">{t.texte}</p>
         </li>
       ))}
     </ul>
 
     {!business.avisVerifies && (
-      <p class="mt-10 max-w-2xl border-l-2 border-gris-clair pl-4 text-[0.85rem] leading-relaxed text-gris">
+      <p class="mt-7 max-w-2xl text-[0.85rem] leading-relaxed text-gris">
         Ces quatre blocs résument ce qui revient dans les avis publics. Ce ne
         sont pas des citations et ils ne sont attribués à personne : les avis
         exacts, avec leurs auteurs, remplaceront ces synthèses dès que le

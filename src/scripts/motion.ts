@@ -147,14 +147,28 @@ if (reduit.matches) {
   );
   for (const parent of groupes.keys()) observateur.observe(parent);
 
-  /** Le chrono : il compte vite, comme le comptoir. */
+  /**
+   * Le minuteur : le cadran se remplit pendant que le nombre monte, en un peu
+   * plus d'une seconde. L'anneau est complet dans le HTML — le script le vide
+   * juste avant de le remplir, de sorte qu'un échec de chargement laisse un
+   * cadran fini plutôt qu'un cadran vide.
+   */
   const chrono = document.querySelector<HTMLElement>("[data-chrono]");
   if (chrono) {
     const secondes = Number(chrono.dataset.chrono || 180);
     const fin = `${Math.floor(secondes / 60)}:${String(secondes % 60).padStart(2, "0")}`;
+    const cadran = document.querySelector<SVGCircleElement>("[data-cadran]");
+    const circonference = cadran ? Number(cadran.getAttribute("stroke-dasharray")) : 0;
     const lancer = () => {
       const etat = { v: 0 };
       demarre();
+      if (cadran) {
+        gsap.fromTo(
+          cadran,
+          { strokeDashoffset: circonference },
+          { strokeDashoffset: 0, duration: 1.1, ease: "power2.out" },
+        );
+      }
       gsap.to(etat, {
         v: secondes,
         duration: 1.1,
@@ -165,6 +179,7 @@ if (reduit.matches) {
         },
         onComplete() {
           chrono.textContent = fin;
+          if (cadran) cadran.style.strokeDashoffset = "0";
           termine();
         },
       });

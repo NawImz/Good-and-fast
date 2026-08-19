@@ -2,13 +2,40 @@
 
 /* ------------------------------------------------------------------ */
 /* Polices — auto-hébergées, sous-ensembles latin et latin-ext seulement.
-   Familjen Grotesk : grotesque bold à large approche, choisie parce que
-   c'est le squelette des lettres en relief de la devanture (G à ergot,
-   O ovale, terminaisons horizontales). Le lettrage réel est Bold, pas Black :
-   on ne va donc pas au-delà de 700.
+
+   Gabarito (affichage) : géométrique à formes rondes et terminaisons douces.
+   Choisie parce que dans ce commerce presque tout est un cercle — le naan,
+   la pizza, l'assiette, la tortilla — et qu'un grotesque neutre racontait
+   l'inverse. Comparée sur planche à Bricolage, Baloo et Familjen avant
+   d'être retenue.
+
+   Familjen Grotesk (texte courant) : volontairement discrète. Elle reprend
+   le squelette des lettres en relief de la devanture (G à ergot, O ovale,
+   terminaisons horizontales), sans dépasser 700 puisque l'enseigne réelle
+   est Bold et non Black.
+
    Yellowtail : écho du script peint sur les vitrines (« Viande Halal »).
-   Réservé à deux ou trois mots, jamais à du texte courant.                 */
+   Un seul emploi dans toute la page.                                       */
 /* ------------------------------------------------------------------ */
+@font-face {
+  font-family: "Gabarito";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400 900;
+  src: url("/fonts/gabarito-latin-wght-normal.woff2") format("woff2-variations");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Gabarito";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400 900;
+  src: url("/fonts/gabarito-latin-ext-wght-normal.woff2") format("woff2-variations");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
+    U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0,
+    U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
 @font-face {
   font-family: "Familjen Grotesk";
   font-style: normal;
@@ -82,9 +109,17 @@
   --color-frite: #e3b755;
 
   --font-sans: "Familjen Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-titre: "Gabarito", ui-rounded, ui-sans-serif, system-ui, sans-serif;
   --font-script: "Yellowtail", ui-serif, cursive;
 
-  --spacing-bandeau: 0.625rem;
+  /* Rayons — une échelle, pas un rayon unique appliqué partout. Les grandes
+     surfaces sont franchement rondes, les petites restent nettes : c'est ce
+     contraste qui empêche le rond de virer au décoratif. */
+  --radius-pastille: 999px;
+  --radius-chip: 0.85rem;
+  --radius-carte: 1.5rem;
+  --radius-panneau: 2rem;
+  --radius-panneau-lg: 2.75rem;
 }
 
 @layer base {
@@ -156,33 +191,65 @@
 
 @layer components {
   /* Même mur, pour les surfaces opaques qui doivent rester solidaires du
-     fond : l'en-tête collant, qui passe devant le contenu en défilant. */
+     fond : l'en-tête flottant, qui passe devant le contenu en défilant. */
   .mur {
     background-color: var(--color-brique);
     background-image: var(--mur);
   }
 
-  /* L'ornement unique repris de la devanture : le bandeau rouge plein qui
-     court au-dessus des vitrines. Il sépare, il souligne, il ne fait rien
-     d'autre. Un seul ornement (playbook §3.5). */
-  .bandeau {
-    display: block;
-    height: var(--spacing-bandeau);
-    background: var(--color-rouge);
+  /*
+   * L'ornement unique : le panneau posé sur le mur.
+   *
+   * C'est le dispositif réel du comptoir — des panneaux de papier crème
+   * montés sur un mur carrelé — et il remplace le bandeau rouge de la version
+   * précédente. Un seul ornement à la fois : la bande a été retirée en même
+   * temps que celui-ci est arrivé.
+   *
+   * L'ombre est chaude et courte : un panneau posé, pas un calque qui flotte.
+   */
+  .panneau {
+    background: var(--color-panneau);
+    border-radius: var(--radius-panneau);
+    box-shadow:
+      0 1px 0 rgb(26 21 18 / 0.04),
+      0 16px 34px -26px rgb(122 20 23 / 0.45);
   }
 
-  .titre-section {
+  @media (min-width: 48rem) {
+    .panneau-lg {
+      border-radius: var(--radius-panneau-lg);
+    }
+  }
+
+  /* Les titres passent en Gabarito : la face ronde ne sert qu'aux énoncés,
+     jamais au texte courant. */
+  .titre {
+    font-family: var(--font-titre);
+    font-weight: 800;
+    letter-spacing: -0.015em;
+    line-height: 1;
+  }
+
+  /* Étiquette de section. Pas de petites capitales espacées façon sur-titre
+     d'agence : une pastille, comme les étiquettes collées sur les vitrines. */
+  .etiquette {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-radius: var(--radius-pastille);
+    padding: 0.4rem 0.95rem;
+    font-family: var(--font-titre);
     font-weight: 700;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    line-height: 1.05;
+    font-size: 0.82rem;
+    line-height: 1;
   }
 
   /* L'approche large est la vraie signature de l'enseigne : les lettres sont
      d'une chasse normale, c'est l'espacement qui est généreux. */
   .enseigne {
-    font-weight: 700;
-    letter-spacing: 0.18em;
+    font-family: var(--font-titre);
+    font-weight: 800;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
   }
 
@@ -196,6 +263,19 @@
   /* Chiffres alignés en colonne dans la carte. */
   .chiffres {
     font-variant-numeric: tabular-nums;
+  }
+
+  /* Pastille de prix : un rond collé, comme l'étiquette « 10 € » posée sur
+     l'affiche des pizzas en salle. La rotation est minuscule — au-delà, elle
+     se lit comme un défaut d'alignement. */
+  .pastille-prix {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-pastille);
+    font-family: var(--font-titre);
+    font-weight: 800;
+    transform: rotate(-2deg);
   }
 }
 
