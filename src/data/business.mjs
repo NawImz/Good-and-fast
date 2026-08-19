@@ -40,12 +40,12 @@ export const business = {
   telephone: { e164: "+33158348057", affichage: "01 58 34 80 57" },
 
   /**
-   * Horaires. `À CONFIRMER` : une source indique le lundi ouvert.
-   * Un jour `null` = fermé.
+   * Horaires confirmés par le client : le restaurant est ouvert tous les
+   * jours, lundi compris. Un jour `null` = fermé.
    */
-  horairesVerifies: false,
+  horairesVerifies: true,
   horaires: [
-    { jour: "Lundi", schema: "Monday", plages: null },
+    { jour: "Lundi", schema: "Monday", plages: [["11:00", "00:00"]] },
     { jour: "Mardi", schema: "Tuesday", plages: [["11:00", "00:00"]] },
     { jour: "Mercredi", schema: "Wednesday", plages: [["11:00", "00:00"]] },
     { jour: "Jeudi", schema: "Thursday", plages: [["11:00", "00:00"]] },
@@ -69,9 +69,9 @@ export const business = {
    */
   themesAvis: [
     {
-      titre: "3 minutes montre en main",
+      titre: "Un service rapide",
       texte:
-        "Le délai le plus court cité par un client entre la commande et le retrait. C'est le point qui revient le plus souvent.",
+        "C'est le point qui revient le plus souvent dans les avis : on ne poireaute pas au comptoir.",
     },
     {
       titre: "Des portions généreuses",
@@ -84,10 +84,26 @@ export const business = {
         "Coupée finement à la broche au moment de la commande, relevée, servie dans un pain qui tient.",
     },
     {
-      titre: "Une équipe qui va vite sans bâcler",
+      titre: "Une équipe accueillante",
       texte: "L'accueil et le rythme du comptoir sont régulièrement salués.",
     },
   ],
+
+  /**
+   * Texte de présentation fourni par le client, repris mot pour mot.
+   * Seul écart : rien. « nan fromage » est son orthographe ; les panneaux en
+   * salle écrivent « naan fromage ».
+   */
+  presentation:
+    "Bienvenue chez Good Fast, la halte gourmande où le sandwich devient " +
+    "spectacle. Ici, le cheese naan fondant enroule une viande grecque " +
+    "découpée minute, les steaks se dégustent en version généreuse et les " +
+    "recettes Kebab–Tacos apportent du relief à chaque bouchée. L'équipe, " +
+    "vive et souriante, sert en un éclair pour les pauses pressées sans " +
+    "sacrifier le goût. Idéal pour un déjeuner sur le pouce, une soirée " +
+    "conviviale ou un takeaway bien pensé, Good Fast mise sur des classiques " +
+    "maîtrisés, des portions généreuses et un plaisir franc — venez tester " +
+    "le nan fromage qui fait parler tout le quartier.",
 
   /** Ce que le commerce affiche lui-même en boutique — donc opposable. */
   engagements: [

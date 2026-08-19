@@ -88,6 +88,30 @@ if (bascule && panneau) {
   });
 }
 
+/**
+ * Plan Google Maps, chargé au clic.
+ *
+ * Le bouton est un vrai lien vers Google Maps : sans ce script, il ouvre le
+ * plan dans un onglet. Avec, il insère le cadre sur place — et c'est
+ * seulement à ce moment que Google dépose ses cookies, ce que l'écran annonce
+ * avant le clic.
+ */
+const bloc = document.querySelector<HTMLElement>("[data-plan]");
+const charger = bloc?.querySelector<HTMLAnchorElement>("[data-plan-charger]");
+if (bloc && charger) {
+  charger.addEventListener("click", (e) => {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+    e.preventDefault();
+    const cadre = document.createElement("iframe");
+    cadre.src = bloc.dataset.planSrc!;
+    cadre.title = bloc.dataset.planTitre ?? "Plan d'accès";
+    cadre.loading = "lazy";
+    cadre.referrerPolicy = "no-referrer-when-downgrade";
+    cadre.className = "aspect-[4/3] w-full rounded-chip border-0 bg-panneau";
+    bloc.replaceChildren(cadre);
+  });
+}
+
 if (reduit.matches) {
   // Rien d'autre. La page est déjà dans son état final.
   window.__animationsTerminees = true;
@@ -146,54 +170,6 @@ if (reduit.matches) {
     { rootMargin: "0px 0px -12% 0px" },
   );
   for (const parent of groupes.keys()) observateur.observe(parent);
-
-  /**
-   * Le minuteur : le cadran se remplit pendant que le nombre monte, en un peu
-   * plus d'une seconde. L'anneau est complet dans le HTML — le script le vide
-   * juste avant de le remplir, de sorte qu'un échec de chargement laisse un
-   * cadran fini plutôt qu'un cadran vide.
-   */
-  const chrono = document.querySelector<HTMLElement>("[data-chrono]");
-  if (chrono) {
-    const secondes = Number(chrono.dataset.chrono || 180);
-    const fin = `${Math.floor(secondes / 60)}:${String(secondes % 60).padStart(2, "0")}`;
-    const cadran = document.querySelector<SVGCircleElement>("[data-cadran]");
-    const circonference = cadran ? Number(cadran.getAttribute("stroke-dasharray")) : 0;
-    const lancer = () => {
-      const etat = { v: 0 };
-      demarre();
-      if (cadran) {
-        gsap.fromTo(
-          cadran,
-          { strokeDashoffset: circonference },
-          { strokeDashoffset: 0, duration: 1.1, ease: "power2.out" },
-        );
-      }
-      gsap.to(etat, {
-        v: secondes,
-        duration: 1.1,
-        ease: "power2.out",
-        onUpdate() {
-          const s = Math.round(etat.v);
-          chrono.textContent = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
-        },
-        onComplete() {
-          chrono.textContent = fin;
-          if (cadran) cadran.style.strokeDashoffset = "0";
-          termine();
-        },
-      });
-    };
-    const obsChrono = new IntersectionObserver(
-      (entrees) => {
-        if (!entrees.some((e) => e.isIntersecting)) return;
-        obsChrono.disconnect();
-        lancer();
-      },
-      { rootMargin: "0px 0px -20% 0px" },
-    );
-    obsChrono.observe(chrono);
-  }
 
   /** Le hero se pose : l'image se cale, elle ne dérive pas. */
   const heroImg = document.querySelector<HTMLElement>("[data-hero-image]");

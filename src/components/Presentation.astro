@@ -1,0 +1,33 @@
+---
+import { business } from "../data/business.mjs";
+
+/**
+ * Le mot de la maison.
+ *
+ * Le texte est fourni par le client et repris mot pour mot : on ne réécrit pas
+ * la voix d'un commerçant. Il est posé sur le mur sombre plutôt que sur une
+ * photo des panneaux de la carte — cette photo, en fond, se lisait comme du
+ * bruit derrière le texte.
+ *
+ * La première phrase est détachée en exergue : c'est l'accroche, le reste est
+ * le corps.
+ */
+const [accroche, ...suite] = business.presentation.split(/(?<=\.)\s+/);
+const corps = suite.join(" ");
+---
+
+<section class="panneau panneau-lg mur-sombre px-5 py-10 text-os md:px-12 md:py-14">
+  <div class="mx-auto max-w-3xl" data-anim-groupe>
+    <p data-anim>
+      <span class="etiquette bg-frite text-encre">Le mot de la maison</span>
+    </p>
+
+    <p data-anim class="titre mt-5 text-[1.7rem] leading-[1.12] md:text-[2.3rem]">
+      {accroche}
+    </p>
+
+    <p data-anim class="mt-5 text-[1.02rem] leading-relaxed text-os/85 md:text-[1.08rem]">
+      {corps}
+    </p>
+  </div>
+</section>

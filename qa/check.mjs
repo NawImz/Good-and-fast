@@ -96,11 +96,9 @@ const navigateur = await ouvrirNavigateur();
     invisibles: [...document.querySelectorAll("[data-anim]")].filter(
       (e) => Number(getComputedStyle(e).opacity) < 0.95,
     ).length,
-    chrono: document.querySelector("[data-chrono]")?.textContent?.trim(),
   }));
   r.ok(!etat.lenis, "Lenis est instancié malgré prefers-reduced-motion");
   r.ok(etat.invisibles === 0, `${etat.invisibles} élément(s) invisible(s) en mouvement réduit`);
-  r.ok(etat.chrono === "3:00", `le chrono affiche « ${etat.chrono} » au lieu de sa valeur finale`);
   await c.close();
 }
 
@@ -161,6 +159,37 @@ const navigateur = await ouvrirNavigateur();
   await c.close();
 }
 
+/* --- Le plan Google ne se charge qu'au clic ------------------------------ */
+{
+  const c = await navigateur.newContext({ viewport: { width: 390, height: 844 } });
+  const p = await c.newPage();
+  const versGoogle = [];
+  p.on("request", (req) => {
+    if (/google|gstatic|ggpht/.test(new URL(req.url()).host)) versGoogle.push(req.url());
+  });
+  await p.goto(base + "/", { waitUntil: "networkidle" });
+
+  const bouton = p.locator("[data-plan-charger]");
+  r.ok(await bouton.count() === 1, "aucun bouton d'affichage du plan");
+  r.ok(
+    (await p.locator("[data-plan] iframe").count()) === 0,
+    "le cadre du plan est présent avant tout clic — Google déposerait ses cookies d'office",
+  );
+  r.ok(versGoogle.length === 0, "requête vers Google avant le clic", versGoogle.join(", "));
+
+  // Sans JavaScript, le bouton doit rester un lien utilisable.
+  const href = await bouton.getAttribute("href");
+  r.ok(/^https:\/\/www\.google\.com\/maps\//.test(href ?? ""), `le bouton du plan ne pointe pas vers Google Maps (${href})`);
+
+  // Le clic insère le cadre. La requête sortante elle-même n'est pas jouée
+  // ici : l'environnement de test n'a pas d'accès à Google.
+  await bouton.click();
+  await p.waitForTimeout(300);
+  const src = await p.locator("[data-plan] iframe").getAttribute("src");
+  r.ok(/output=embed/.test(src ?? ""), `le clic n'insère pas le cadre du plan (${src})`);
+  await c.close();
+}
+
 /* --- Le motif de mur ne doit pas dériver des tokens ---------------------- */
 {
   const c = await navigateur.newContext();
@@ -202,6 +231,89 @@ const navigateur = await ouvrirNavigateur();
     const v = ratio(encre, mur.brique);
     r.ok(v >= seuil, `${nom} sur la face de brique : ${v.toFixed(2)}:1 (seuil ${seuil})`);
   }
+  await c.close();
+}
+
+/* --- Texte illisible sur son fond ---------------------------------------- */
+{
+  // Le contrôle qui manquait : une collision de cascade a rendu une section
+  // entière en texte crème sur fond blanc, invisible, sans qu'aucun test ne
+  // bronche.
+  //
+  // Les couleurs sont normalisées en composant réellement les calques sur un
+  // canvas : Tailwind émet de l'oklab avec alpha, qu'on ne peut pas lire comme
+  // du rgb, et « crème à 70 % sur encre » est parfaitement lisible alors que
+  // la valeur brute ne dit rien.
+  const c = await navigateur.newContext({ viewport: { width: 1440, height: 900 } });
+  const p = await c.newPage();
+  await p.goto(base + "/", { waitUntil: "networkidle" });
+  // Il faut parcourir la page d'abord : les éléments animés sont encore à
+  // opacité zéro tant qu'ils ne sont pas entrés dans la fenêtre, et un audit
+  // qui les saute passe à côté de sections entières.
+  await p.evaluate(async () => {
+    for (let y = 0; y < document.body.scrollHeight; y += innerHeight * 0.8) {
+      window.__lenis ? window.__lenis.scrollTo(y, { immediate: true }) : scrollTo(0, y);
+      await new Promise((res) => setTimeout(res, 90));
+    }
+    await new Promise((res) => setTimeout(res, 350));
+  });
+  const fautes = await p.evaluate(() => {
+    const cv = document.createElement("canvas");
+    cv.width = cv.height = 1;
+    const ctx = cv.getContext("2d", { willReadFrequently: true });
+
+    /** Empile des couleurs CSS et rend le pixel obtenu. */
+    const composer = (couches) => {
+      ctx.clearRect(0, 0, 1, 1);
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, 1, 1);
+      for (const couleur of couches) {
+        ctx.fillStyle = couleur;
+        ctx.fillRect(0, 0, 1, 1);
+      }
+      const d = ctx.getImageData(0, 0, 1, 1).data;
+      return [d[0], d[1], d[2]];
+    };
+    const lum = ([r, g, b]) => {
+      const f = (v) => {
+        const x = v / 255;
+        return x <= 0.03928 ? x / 12.92 : Math.pow((x + 0.055) / 1.055, 2.4);
+      };
+      return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b);
+    };
+    const transparent = (bg) => !bg || bg === "transparent" || /,\s*0\)$/.test(bg);
+
+    const sortie = [];
+    for (const el of document.querySelectorAll("p,h1,h2,h3,li,dt,dd,span,a,address")) {
+      const texte = [...el.childNodes].filter((n) => n.nodeType === 3).map((n) => n.textContent.trim()).join("");
+      if (texte.length < 4) continue;
+      const st = getComputedStyle(el);
+      if (st.display === "none" || st.visibility === "hidden" || Number(st.opacity) === 0) continue;
+      // Un élément masqué visuellement (lien d'évitement, texte de lecteur
+      // d'écran) est découpé à un pixel : il n'a pas de fond à contraster.
+      const r = el.getBoundingClientRect();
+      if (r.width < 4 || r.height < 4) continue;
+
+      // Remonter jusqu'au premier fond opaque, en gardant les calques
+      // translucides rencontrés en chemin.
+      const couches = [];
+      for (let a = el; a; a = a.parentElement) {
+        const bg = getComputedStyle(a).backgroundColor;
+        if (transparent(bg)) continue;
+        couches.unshift(bg);
+        if (!/rgba|\/\s*0?\.\d/.test(bg)) break;
+      }
+      if (!couches.length) continue;
+
+      const fond = composer(couches);
+      const encre = composer([...couches, st.color]);
+      const x = lum(encre), y = lum(fond);
+      const v = (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05);
+      if (v < 3) sortie.push(`« ${texte.slice(0, 34)} » ${v.toFixed(2)}:1`);
+    }
+    return sortie;
+  });
+  r.ok(fautes.length === 0, "texte illisible sur son fond", [...new Set(fautes)].slice(0, 8).join("\n     "));
   await c.close();
 }
 

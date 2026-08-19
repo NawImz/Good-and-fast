@@ -89,11 +89,13 @@ panneaux de papier crème montés sur un mur carrelé. Le bandeau rouge de la
 version précédente a été retiré en même temps que celui-ci est arrivé : un seul
 ornement à la fois.
 
-**L'élément signature : le minuteur.** La section « trois minutes » est un
-cadran qui se remplit, pas une bande avec un nombre. Un chrono est rond, et
-c'est le seul fait que ce commerce possède en propre. L'anneau est complet dans
-le HTML : sans JavaScript, le cadran montre son état final au lieu de rester
-vide.
+**Le mot de la maison, sur le mur sombre.** Le texte de présentation fourni
+par le client est repris **mot pour mot** et posé sur un panneau de brique
+rouge sombre — le même appareil que le mur de la page, dans la famille du rouge
+de l'enseigne. Il a remplacé la section chronomètre, retirée à la demande du
+client : le site ne met plus en avant de délai chiffré. Sur ce fond, c'est la
+partie la plus claire du motif — le joint — qui commande les contrastes :
+`--os` y tient 8,07:1 et `--frite` 4,64:1.
 
 **Typographie.** Deux rôles, deux familles, plus un accent.
 
@@ -119,16 +121,21 @@ recadrée et vérifiée à 16 px — la seule taille qui compte dans un onglet.
 - **Pas de formulaire de contact.** Un site statique n'a pas de boîte de
   réception. Un formulaire que personne ne relève fait perdre des clients
   persuadés d'avoir écrit. Le canal est le téléphone.
-- **Pas de bandeau de cookies**, parce qu'il n'y a aucun cookie : pas de mesure
-  d'audience, pas de police en CDN, pas de plan Google Maps. `check.mjs`
-  échoue si un cookie ou une requête externe apparaît.
+- **Pas de bandeau de cookies**, alors même que le plan est un Google Maps.
+  Un plan Google intégré dépose ses cookies dès le chargement de la page, ce
+  qui rendrait le bandeau obligatoire ; ici il est **chargé au clic** (motif
+  recommandé par la CNIL), et l'écran annonce le dépôt avant le clic. Sinon :
+  pas de mesure d'audience, pas de police en CDN. `check.mjs` échoue si un
+  cookie, une requête externe ou une requête vers Google apparaît avant le
+  clic.
 - **Pas d'avis nominatifs ni de balisage `schema.org/Review`.** Le drapeau
   `avisVerifies` est à `false` dans `src/data/business.mjs` : tant qu'il l'est,
   les blocs d'avis sont des synthèses explicitement présentées comme telles et
   aucune note agrégée n'est déclarée à Google.
-- **Pas de plan interactif**, faute de coordonnées GPS. Le bloc affiche la
-  devanture et un lien OpenStreetMap. Renseigner `adresse.latitude` et
-  `adresse.longitude` bascule automatiquement sur la carte intégrée.
+- **Le bouton du plan est un vrai lien.** Sans JavaScript il ouvre Google Maps
+  dans un onglet ; avec, il insère le cadre sur place. Le lien de secours reste
+  hors du cadre : une iframe refusée peint sa propre page d'erreur opaque
+  par-dessus tout ce qu'on mettrait derrière.
 - **Pas de lien de livraison.** Aucun n'a été confirmé ; un lien mort coûte
   plus qu'une absence.
 
@@ -173,8 +180,10 @@ scripts/dev/             outils ponctuels (palette, vectorisation du logo)
 - **`check.mjs`** — liens `tel:` en E.164, menu mobile, position réelle des
   ancres, rien sous la barre fixe, rendu sans JavaScript, rendu en
   `prefers-reduced-motion`, mots collés, JSON-LD (type, téléphone, adresse,
-  horaires fusionnés, absence d'avis non vérifiés), cookies et requêtes
-  externes.
+  horaires fusionnés, absence d'avis non vérifiés), **plan Google chargé
+  seulement au clic**, cookies et requêtes externes, **lisibilité réelle du
+  texte sur son fond** (couleurs composées sur un canvas, page parcourue au
+  préalable pour que les sections animées soient évaluées).
 - **`check-motion.mjs`** — chaque animation se termine, y compris dans une
   fenêtre si haute que toute la page tient dedans.
 
@@ -183,6 +192,11 @@ corrigés ici (prix qui passaient à la ligne, photo qui ne remplissait pas sa
 colonne, titre annonçant trois remarques pour quatre blocs, teinte de brique
 qui virait au rosé une fois éclaircie, noms de plats cassés en deux dans les
 cartes étroites, trou dans la mosaïque) n'étaient visibles que comme ça.
+
+Un de ces défauts — une collision de cascade qui rendait une section entière en
+texte crème sur fond blanc — a donné lieu à un contrôle dédié dans `check.mjs`.
+Le contrôle a été validé en réintroduisant le bug : il tombe à 1,04:1 et
+repasse au vert une fois corrigé.
 
 ---
 
@@ -203,11 +217,7 @@ jour de publication.
 2. **Nom de domaine** — `site` dans `business.mjs` vaut
    `https://good-and-fast.fr`, qui est un **placeholder** : il alimente les
    URL canoniques et le sitemap.
-3. **Horaires du lundi** — `horairesVerifies: false`. Une source indique le
-   lundi ouvert ; le site affiche « fermé » et le signale.
-4. **Coordonnées GPS** — sur Google Maps, appui long sur le point, les deux
-   nombres se copient. Attention aux virgules décimales à convertir en points.
-5. **Avis** — le texte exact de 3 à 5 avis, avec les noms affichés et les
+3. **Avis** — le texte exact de 3 à 5 avis, avec les noms affichés et les
    étoiles. Passer `avisVerifies` à `true` une fois saisis.
 
 ### Utile, non bloquant

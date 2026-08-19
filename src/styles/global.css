@@ -132,14 +132,22 @@
 
     /*
      * Le mur. Appareil à joints croisés relevé sur la devanture : assises de
-     * 26 px, briques trois fois plus longues que hautes, joint de 2 px, une
+     * 26 px, briques trois fois plus longues que hautes, joint de 3 px, une
      * assise sur deux décalée d'une demi-brique.
      *
      * Tuile SVG en data: URI — aucune requête. La couleur du joint y est
      * écrite en dur, un data: URI n'héritant pas des variables CSS ;
      * `qa/check.mjs` échoue si elle cesse de correspondre à --color-mortier.
      */
-    --mur: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='78' height='52'%3E%3Cg fill='%23FAF4EE'%3E%3Crect width='78' height='2'/%3E%3Crect y='26' width='78' height='2'/%3E%3Crect width='2' height='26'/%3E%3Crect x='39' y='26' width='2' height='26'/%3E%3C/g%3E%3C/svg%3E");
+    --mur: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='78' height='52'%3E%3Cg fill='%23FAF4EE'%3E%3Crect width='78' height='3'/%3E%3Crect y='26' width='78' height='3'/%3E%3Crect width='3' height='26'/%3E%3Crect x='39' y='26' width='3' height='26'/%3E%3C/g%3E%3C/svg%3E");
+
+    /*
+     * Le même mur, dans la famille du rouge de l'enseigne, pour les panneaux
+     * sombres. Sur fond sombre c'est la partie la PLUS CLAIRE du motif — le
+     * joint — qui commande les contrastes : --os y tient 8,07:1 et --frite
+     * 4,64:1, tous deux au-dessus du seuil.
+     */
+    --mur-sombre: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='78' height='52'%3E%3Cg fill='%238E2226'%3E%3Crect width='78' height='3'/%3E%3Crect y='26' width='78' height='3'/%3E%3Crect width='3' height='26'/%3E%3Crect x='39' y='26' width='3' height='26'/%3E%3C/g%3E%3C/svg%3E");
   }
 
   html {
@@ -190,13 +198,6 @@
 }
 
 @layer components {
-  /* Même mur, pour les surfaces opaques qui doivent rester solidaires du
-     fond : l'en-tête flottant, qui passe devant le contenu en défilant. */
-  .mur {
-    background-color: var(--color-brique);
-    background-image: var(--mur);
-  }
-
   /*
    * L'ornement unique : le panneau posé sur le mur.
    *
@@ -208,7 +209,7 @@
    * L'ombre est chaude et courte : un panneau posé, pas un calque qui flotte.
    */
   .panneau {
-    background: var(--color-panneau);
+    background-color: var(--color-panneau);
     border-radius: var(--radius-panneau);
     box-shadow:
       0 1px 0 rgb(26 21 18 / 0.04),
@@ -219,6 +220,24 @@
     .panneau-lg {
       border-radius: var(--radius-panneau-lg);
     }
+  }
+
+  /*
+   * Les murs. Déclarés APRÈS .panneau : à spécificité égale c'est l'ordre du
+   * fichier qui tranche, et « .panneau .mur-sombre » doit rendre un panneau
+   * sombre, pas un panneau crème. C'est exactement la collision qui a fait
+   * rendre une section en texte clair sur fond blanc.
+   */
+  .mur {
+    background-color: var(--color-brique);
+    background-image: var(--mur);
+  }
+
+  /* Mur sombre : le fond des panneaux rouges. Il remplace la photo des
+     panneaux de la carte, qui parasitait la lecture au lieu de la servir. */
+  .mur-sombre {
+    background-color: var(--color-rouge-nuit);
+    background-image: var(--mur-sombre);
   }
 
   /* Les titres passent en Gabarito : la face ronde ne sert qu'aux énoncés,

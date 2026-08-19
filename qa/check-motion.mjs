@@ -59,9 +59,6 @@ for (const c of cas) {
     restes.map((x) => `« ${x.texte} » opacité ${x.opacite} / ${x.transform}`).join("\n     "),
   );
 
-  const chrono = await p.textContent("[data-chrono]");
-  r.ok(chrono.trim() === "3:00", `${c.nom} : le chrono s'arrête sur « ${chrono.trim() }» au lieu de 3:00`);
-
   // L'image du hero doit revenir exactement à l'échelle 1, sans bord blanc.
   const echelle = await p.evaluate(() => {
     const t = getComputedStyle(document.querySelector("[data-hero-image]")).transform;
