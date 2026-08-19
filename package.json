@@ -12,7 +12,8 @@
     "qa:check": "node qa/check.mjs",
     "qa:motion": "node qa/check-motion.mjs",
     "qa": "npm run build && node qa/run-all.mjs",
-    "contrast": "node scripts/contrast.mjs"
+    "contrast": "node scripts/contrast.mjs",
+    "apercu": "npm run build && node scripts/artefact.mjs"
   },
   "repository": {
     "type": "git",
