@@ -161,6 +161,50 @@ const navigateur = await ouvrirNavigateur();
   await c.close();
 }
 
+/* --- Le motif de mur ne doit pas dériver des tokens ---------------------- */
+{
+  const c = await navigateur.newContext();
+  const p = await c.newPage();
+  await p.goto(base + "/");
+  const mur = await p.evaluate(() => {
+    const r = getComputedStyle(document.documentElement);
+    const style = getComputedStyle(document.body);
+    return {
+      motif: r.getPropertyValue("--mur"),
+      mortier: r.getPropertyValue("--color-mortier").trim(),
+      fond: style.backgroundColor,
+      brique: r.getPropertyValue("--color-brique").trim(),
+      image: style.backgroundImage,
+    };
+  });
+  // Le joint est écrit en dur dans le data: URI : on vérifie qu'il correspond
+  // toujours au token, sinon le mur se désaccorde en silence.
+  const joint = mur.motif.match(/%23([0-9A-Fa-f]{6})/)?.[1];
+  r.ok(Boolean(joint), "aucune couleur de joint trouvée dans le motif de mur");
+  r.ok(
+    joint && `#${joint}`.toLowerCase() === mur.mortier.toLowerCase(),
+    `le joint du motif (#${joint}) ne correspond plus à --color-mortier (${mur.mortier})`,
+  );
+  r.ok(mur.image.includes("svg"), "le fond du corps de page ne porte pas le motif de mur");
+
+  // La face de brique est la partie la plus sombre du motif : c'est elle qui
+  // commande les contrastes du texte posé dessus.
+  const lum = (hex) => {
+    const c = [1, 3, 5].map((i) => {
+      const v = parseInt(hex.slice(i, i + 2), 16) / 255;
+      return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+    });
+    return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2];
+  };
+  const ratio = (a, b) => (Math.max(lum(a), lum(b)) + 0.05) / (Math.min(lum(a), lum(b)) + 0.05);
+  r.ok(lum(mur.brique) < lum(mur.mortier), "la face de brique doit être plus sombre que le joint");
+  for (const [nom, encre, seuil] of [["--encre", "#1a1512", 4.5], ["--gris", "#6b615a", 4.5], ["--rouge", "#c01d22", 4.5], ["--gris-clair", "#857a74", 3]]) {
+    const v = ratio(encre, mur.brique);
+    r.ok(v >= seuil, `${nom} sur la face de brique : ${v.toFixed(2)}:1 (seuil ${seuil})`);
+  }
+  await c.close();
+}
+
 /* --- Cookies tiers ------------------------------------------------------ */
 {
   const c = await navigateur.newContext();

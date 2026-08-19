@@ -9,7 +9,7 @@ npm install
 npm run dev                    # développement
 npm run build                  # build statique dans dist/
 npm run qa                     # build + les trois scripts de QA
-npm run contrast '#C01D22' '#F7F2EC'   # rapport de contraste WCAG
+npm run contrast '#C01D22' '#F2E1D4'   # rapport de contraste WCAG
 ```
 
 En sandbox distante, les scripts de QA ont besoin du chemin du navigateur :
@@ -28,10 +28,32 @@ Rien n'a été inventé : chaque valeur est prélevée sur les photos du commerc
 
 | Question | Réponse pour Good & Fast | Conséquence sur le site |
 |---|---|---|
-| La matière | Pain naan brûlé au four, papier et aluminium, brique peinte, carrelage rouge brillant | Fond papier chaud, photos en gros plan, aucune texture décorative ajoutée |
+| La matière | Un mur de brique, du pain naan sorti du four, du papier et de l'aluminium | Le fond du site **est** ce mur ; les panneaux de la carte sont du papier posé dessus |
 | Le geste | Trancher à la broche, empiler, envelopper, tendre par-dessus le comptoir | Rythme dense, animations courtes et sèches |
 | L'émotion d'achat | Faim immédiate, et la confiance qu'on ressort vite | Le prix et le téléphone toujours visibles |
 | Ce qu'on regarde avant d'entrer | La broche qui tourne, la carte, les prix | Le premier écran est une photo de plat, pas une façade |
+
+**Le fond est le mur, pas une feuille de papier.** La matière de ce commerce
+est la brique : la devanture est un mur de parement en appareil à joints
+croisés. Un fond crème aurait été le réflexe d'un autre projet — le playbook
+range d'ailleurs « fond papier chaud » parmi ce qu'il ne faut pas reprendre.
+
+- Brique relevée sur la devanture : **`#A76446`**, teinte 18,6°.
+  Mortier relevé : **`#B4B7BF`**, gris franchement froid.
+- Le mur à l'écran : face **`--brique #F2E1D4`**, joint **`--mortier #FAF4EE`**,
+  plus clair et plus froid que la face, comme le mortier réel. La teinte est
+  remontée à 26° parce qu'à cette clarté 18,6° vire au rosé.
+- Motif : assises de 26 px, briques trois fois plus longues que hautes, joint
+  de 2 px, une assise sur deux décalée d'une demi-brique — les proportions
+  mesurées sur la photo. Tuile SVG en `data:` URI, donc aucune requête.
+- **La face de brique est la partie la plus sombre du motif : c'est elle qui
+  commande tous les contrastes.** `qa/check.mjs` les revérifie à chaque passage,
+  et échoue aussi si la couleur du joint écrite dans le motif cesse de
+  correspondre à `--color-mortier`.
+
+Les panneaux de la carte (`--panneau #FEFAF6`) sont du papier posé sur ce mur :
+c'est exactement le dispositif du comptoir, des panneaux crème sur un mur
+carrelé. Les avis, eux, restent à même le mur.
 
 **Couleurs — prélevées, puis corrigées pour l'écran.** La devanture est la
 seule source fiable : les photos d'intérieur sont sous éclairage jaune et
@@ -39,10 +61,8 @@ donnent des valeurs boueuses (le carrelage rouge y ressort à `#8D5D66`).
 
 - Rouge des lettres en relief, médiane sur ~9 000 pixels filtrés : **`#B93437`**,
   teinte 358,6°.
-- Corrigé à la même teinte pour tenir à l'écran : **`--rouge #C01D22`**, qui
-  donne **5,48:1 dans les deux sens** avec le fond papier. Sur fond clair le
-  rapport est symétrique : une seule teinte suffit pour l'encre *et* pour
-  l'aplat.
+- Corrigé à la même teinte pour tenir à l'écran : **`--rouge #C01D22`**,
+  4,80:1 sur la face de brique, et `--os` à 5,65:1 dessus.
 - **`--frite #E3B755`** vient des frites, pas d'un nuancier. Il n'apparaît que
   sur les fonds sombres, où il passe AA (5,76:1 sur `--rouge-nuit`).
 - Interdit et documenté dans `global.css` : `--rouge` sur `--encre` (2,97:1).
@@ -128,8 +148,8 @@ scripts/dev/             outils ponctuels (palette, vectorisation du logo)
 
 Les captures sont à **regarder**, pas seulement à produire : plusieurs défauts
 corrigés ici (prix qui passaient à la ligne, photo qui ne remplissait pas sa
-colonne, titre annonçant trois remarques pour quatre blocs) n'étaient visibles
-que comme ça.
+colonne, titre annonçant trois remarques pour quatre blocs, teinte de brique
+qui virait au rosé une fois éclaircie) n'étaient visibles que comme ça.
 
 ---
 
