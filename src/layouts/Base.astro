@@ -1,0 +1,116 @@
+---
+import "../styles/global.css";
+import { business, site, adresseLigne, horairesFusionnes } from "../data/business.mjs";
+
+interface Props {
+  titre: string;
+  description: string;
+  /** Chemin canonique, sans domaine ni barre finale. */
+  chemin?: string;
+}
+
+const { titre, description, chemin = "" } = Astro.props;
+const canonical = new URL(chemin, site).href;
+
+/**
+ * schema.org/Restaurant.
+ * Ni `review` ni `aggregateRating` tant que `avisVerifies` est faux : on ne
+ * déclare pas à Google des avis qu'on n'a pas vérifiés (art. L121-2 du code
+ * de la consommation pour les faux avis).
+ */
+const jsonLd: Record<string, unknown> = {
+  "@context": "https://schema.org",
+  "@type": "Restaurant",
+  name: business.nom,
+  legalName: business.raisonSociale,
+  url: canonical,
+  telephone: business.telephone.e164,
+  servesCuisine: ["Kebab", "Tacos", "Pizza", "Burger"],
+  priceRange: "€",
+  currenciesAccepted: "EUR",
+  paymentAccepted: business.accueil.paiements.join(", "),
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: business.adresse.rue,
+    postalCode: business.adresse.codePostal,
+    addressLocality: business.adresse.ville,
+    addressCountry: business.adresse.pays,
+  },
+  openingHoursSpecification: horairesFusionnes()
+    .filter((g) => g.plages)
+    .map((g) => ({
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: g.jours.map((j: { schema: string }) => j.schema),
+      opens: g.plages![0][0],
+      closes: g.plages![0][1],
+    })),
+};
+
+if (business.adresse.latitude != null && business.adresse.longitude != null) {
+  jsonLd.geo = {
+    "@type": "GeoCoordinates",
+    latitude: business.adresse.latitude,
+    longitude: business.adresse.longitude,
+  };
+}
+---
+
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{titre}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="fr_FR" />
+    <meta property="og:title" content={titre} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:site_name" content={business.nom} />
+    <meta name="geo.placename" content={adresseLigne} />
+    <meta name="theme-color" content="#c01d22" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <link
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      href="/fonts/familjen-grotesk-latin-wght-normal.woff2"
+      crossorigin
+    />
+
+    <script is:inline>
+      // Pose .js avant le premier rendu : sans ce marqueur, aucun état
+      // « avant animation » n'existe et la page s'affiche complète.
+      if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        document.documentElement.classList.add("js");
+        // Si le module d'animation n'a jamais démarré au bout de 2,5 s, on
+        // retire le marqueur : mieux vaut aucune animation que du contenu
+        // resté invisible.
+        setTimeout(function () {
+          if (window.__animationsTerminees === undefined) {
+            document.documentElement.classList.remove("js");
+          }
+        }, 2500);
+      }
+    </script>
+
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </head>
+
+  <body>
+    <a
+      href="#contenu"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:inline-flex focus:min-h-11 focus:items-center focus:bg-encre focus:px-4 focus:text-os"
+    >
+      Aller au contenu
+    </a>
+    <slot />
+    <script>
+      import "../scripts/motion.ts";
+    </script>
+  </body>
+</html>

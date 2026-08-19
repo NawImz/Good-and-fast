@@ -1,0 +1,194 @@
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------ */
+/* Polices — auto-hébergées, sous-ensembles latin et latin-ext seulement.
+   Familjen Grotesk : grotesque bold à large approche, choisie parce que
+   c'est le squelette des lettres en relief de la devanture (G à ergot,
+   O ovale, terminaisons horizontales). Le lettrage réel est Bold, pas Black :
+   on ne va donc pas au-delà de 700.
+   Yellowtail : écho du script peint sur les vitrines (« Viande Halal »).
+   Réservé à deux ou trois mots, jamais à du texte courant.                 */
+/* ------------------------------------------------------------------ */
+@font-face {
+  font-family: "Familjen Grotesk";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400 700;
+  src: url("/fonts/familjen-grotesk-latin-wght-normal.woff2") format("woff2-variations");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Familjen Grotesk";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400 700;
+  src: url("/fonts/familjen-grotesk-latin-ext-wght-normal.woff2") format("woff2-variations");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
+    U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0,
+    U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "Yellowtail";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url("/fonts/yellowtail-latin-400-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* ------------------------------------------------------------------ */
+/* Tokens — tous prélevés sur les photos du commerce puis corrigés pour
+   l'écran, jamais choisis au jugé. Contrastes vérifiés : npm run contrast.
+
+     --rouge        #C01D22  5,48:1 sur --os, ET --os 5,48:1 dessus
+                             (sur fond clair le rapport est symétrique :
+                              une seule teinte suffit dans les deux sens)
+     --encre        #1A1512  16,27:1 sur --os
+     --gris         #6B615A   5,42:1 sur --os        (texte secondaire)
+     --gris-clair   #8B807A   3,45:1 sur --os        (UI et filets seulement)
+     --rouge-nuit   #7A1417  --os  9,73:1 dessus
+     --frite        #E3B755  5,76:1 sur --rouge-nuit — jamais sur fond clair
+
+   Interdit : --rouge sur --encre (2,97:1).                               */
+/* ------------------------------------------------------------------ */
+@theme {
+  --color-os: #f7f2ec;
+  --color-os-pur: #ffffff;
+  --color-encre: #1a1512;
+  --color-gris: #6b615a;
+  --color-gris-clair: #8b807a;
+  --color-rouge: #c01d22;
+  --color-rouge-nuit: #7a1417;
+  --color-frite: #e3b755;
+
+  --font-sans: "Familjen Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-script: "Yellowtail", ui-serif, cursive;
+
+  --spacing-bandeau: 0.625rem;
+}
+
+@layer base {
+  :root {
+    /* Hauteurs mesurées au runtime (ResizeObserver). Les littéraux servent de
+       plancher quand JavaScript est absent — jamais de valeur figée en dur. */
+    --barre-appel-h: 4.25rem;
+    --entete-h: 3.5rem;
+    color-scheme: light;
+  }
+
+  html {
+    background: var(--color-os);
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background: var(--color-os);
+    color: var(--color-encre);
+    font-family: var(--font-sans);
+    font-synthesis-weight: none;
+    text-rendering: optimizeLegibility;
+    /* La barre d'appel fixe ne doit jamais recouvrir la fin de la page. */
+    padding-bottom: calc(var(--barre-appel-h) + env(safe-area-inset-bottom, 0px));
+  }
+
+  @media (min-width: 48rem) {
+    body {
+      padding-bottom: 0;
+    }
+  }
+
+  h1, h2, h3 {
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Les ancres visent sous l'en-tête collant. */
+  :target {
+    scroll-margin-top: calc(var(--entete-h) + 1.5rem);
+  }
+
+  ::selection {
+    background: var(--color-rouge);
+    color: var(--color-os);
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-rouge);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+}
+
+@layer components {
+  /* L'ornement unique repris de la devanture : le bandeau rouge plein qui
+     court au-dessus des vitrines. Il sépare, il souligne, il ne fait rien
+     d'autre. Un seul ornement (playbook §3.5). */
+  .bandeau {
+    display: block;
+    height: var(--spacing-bandeau);
+    background: var(--color-rouge);
+  }
+
+  .titre-section {
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    line-height: 1.05;
+  }
+
+  /* L'approche large est la vraie signature de l'enseigne : les lettres sont
+     d'une chasse normale, c'est l'espacement qui est généreux. */
+  .enseigne {
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  .script {
+    font-family: var(--font-script);
+    font-weight: 400;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+
+  /* Chiffres alignés en colonne dans la carte. */
+  .chiffres {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Animations.
+   Règle : tout est visible par défaut. Les états « avant animation » ne
+   s'appliquent que si le script a posé .js sur <html>, donc sans JavaScript
+   la page est complète et lisible. `prefers-reduced-motion` court-circuite
+   la totalité du module.                                                  */
+/* ------------------------------------------------------------------ */
+.js [data-anim] {
+  opacity: 0;
+  transform: translateY(14px);
+}
+.js [data-anim="fondu"] {
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js [data-anim] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  html {
+    scroll-behavior: auto !important;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

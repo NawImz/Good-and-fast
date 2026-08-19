@@ -1,0 +1,54 @@
+---
+import { Image } from "astro:assets";
+import { business } from "../data/business.mjs";
+import { photos } from "../data/photos.mjs";
+---
+
+<section id="signature" class="mx-auto max-w-6xl px-5 py-14 md:px-8 md:py-24">
+  <div class="grid gap-9 md:grid-cols-2 md:items-center md:gap-14" data-anim-groupe>
+    <div class="order-2 md:order-none">
+      <h2 data-anim class="titre-section text-[0.72rem] text-rouge">La spécialité</h2>
+      <p
+        data-anim
+        class="mt-4 text-[2rem] leading-[1.03] font-bold tracking-[-0.015em] md:text-[2.6rem]"
+      >
+        Le cheese naan,<br />et le grec qu'on met dedans.
+      </p>
+      <div data-anim class="mt-5 space-y-4 text-[1.02rem] leading-relaxed text-gris">
+        <p>
+          Le pain est pétri sur place, chaque jour — c'est écrit au-dessus du
+          comptoir, et ça se voit à la cloque du naan qui sort du four. Le
+          fromage fond dedans avant que la viande arrive.
+        </p>
+        <p>
+          La broche tourne en salle, face à vous. La viande est tranchée fine au
+          moment de la commande, pas réchauffée d'un service à l'autre : c'est
+          ce qui fait la différence de goût que les clients citent le plus.
+        </p>
+      </div>
+
+      <ul data-anim class="mt-7 grid gap-3 sm:grid-cols-3">
+        {business.engagements.map((e) => (
+          <li class="border-t-2 border-encre pt-3">
+            <p class="text-[0.95rem] font-bold">{e.titre}</p>
+            <p class="mt-1 text-[0.85rem] leading-snug text-gris">{e.detail}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    <figure data-anim class="order-1 md:order-first">
+      <Image
+        src={photos.tacosFrites.src}
+        alt={photos.tacosFrites.alt}
+        widths={[390, 780, 1170]}
+        sizes="(min-width: 48rem) 46vw, 100vw"
+        format="webp"
+        quality={72}
+        loading="lazy"
+        class="aspect-[4/3] w-full object-cover"
+      />
+      <span class="bandeau" aria-hidden="true"></span>
+    </figure>
+  </div>
+</section>

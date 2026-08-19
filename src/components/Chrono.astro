@@ -1,0 +1,63 @@
+---
+import { Image } from "astro:assets";
+import { photos } from "../data/photos.mjs";
+
+/**
+ * Le chrono s'appuie sur un fait rapporté par un client : trois minutes entre
+ * la commande et le retrait. Les gestes ci-dessous sont donnés dans leur
+ * ordre réel, sans durée individuelle — aucun découpage étape par étape n'a
+ * été chronométré, et en inventer un serait un chiffre faux.
+ */
+const gestes = [
+  { titre: "Vous commandez", detail: "Au comptoir ou par téléphone, pour un retrait." },
+  { titre: "La broche est entamée", detail: "La viande est tranchée fine, à la commande." },
+  { titre: "Le pain passe au four", detail: "Naan ou galette, chaud, jamais réchauffé deux fois." },
+  { titre: "C'est emballé", detail: "Papier, aluminium, frites dans le sachet. Vous repartez." },
+];
+---
+
+<section class="relative overflow-hidden bg-rouge-nuit text-os">
+  <Image
+    src={photos.comptoirBroche.src}
+    alt=""
+    aria-hidden="true"
+    widths={[780, 1360]}
+    sizes="100vw"
+    format="webp"
+    quality={55}
+    loading="lazy"
+    class="absolute inset-0 h-full w-full object-cover opacity-[0.14]"
+  />
+
+  <div class="relative mx-auto max-w-6xl px-5 py-16 md:px-8 md:py-24" data-anim-groupe>
+    <div class="md:flex md:items-end md:justify-between md:gap-10">
+      <div>
+        <h2 data-anim class="titre-section text-[0.72rem] text-frite">Le rythme de la maison</h2>
+        <p data-anim class="mt-4 max-w-lg text-[1.9rem] leading-[1.05] font-bold md:text-[2.5rem]">
+          Le meilleur temps jamais chronométré par un client.
+        </p>
+      </div>
+
+      <p
+        data-anim="fondu"
+        data-chrono="180"
+        class="chiffres mt-7 text-[4.5rem] leading-none font-bold tracking-[-0.03em] text-frite md:mt-0 md:text-[6rem]"
+      >3:00</p>
+    </div>
+
+    <ol class="mt-11 grid gap-x-8 gap-y-7 sm:grid-cols-2 lg:grid-cols-4">
+      {gestes.map((g) => (
+        <li data-anim class="border-t border-os/25 pt-4">
+          <p class="text-[1.02rem] font-bold">{g.titre}</p>
+          <p class="mt-1.5 text-[0.9rem] leading-snug text-os/70">{g.detail}</p>
+        </li>
+      ))}
+    </ol>
+
+    <p data-anim class="mt-9 max-w-2xl text-[0.85rem] leading-relaxed text-os/60">
+      Trois minutes, c'est le meilleur temps rapporté dans un avis, pas une
+      promesse tenue à chaque service. Aux heures de pointe, il y a du monde
+      au comptoir — et on préfère le dire.
+    </p>
+  </div>
+</section>

@@ -1,0 +1,58 @@
+---
+import Base from "../layouts/Base.astro";
+import PageTexte from "../components/PageTexte.astro";
+import { business } from "../data/business.mjs";
+---
+
+<Base
+  titre="Données personnelles — Good & Fast"
+  description="Ce site n'utilise aucun cookie et ne collecte aucune donnée personnelle. Détail des traitements pour le site de Good & Fast à Épinay-sur-Seine."
+  chemin="/donnees-personnelles"
+>
+  <PageTexte titre="Données personnelles et cookies">
+    <p class="text-[1.1rem] text-encre">
+      Ce site ne dépose aucun cookie et ne collecte aucune donnée personnelle.
+      Cette page est courte parce qu'il n'y a rien de plus à déclarer.
+    </p>
+
+    <section>
+      <h2 class="text-[1.15rem] font-bold text-encre">Aucun formulaire</h2>
+      <p class="mt-3">
+        Il n'y a pas de formulaire de contact sur ce site. Le seul moyen de
+        joindre le restaurant est le téléphone, au
+        {" "}{business.telephone.affichage}, ou une visite au comptoir. Un
+        formulaire dont personne ne relève la boîte de réception ferait perdre
+        des clients persuadés d'avoir écrit : nous préférons afficher le
+        numéro.
+      </p>
+    </section>
+
+    <section>
+      <h2 class="text-[1.15rem] font-bold text-encre">Aucune mesure d'audience</h2>
+      <p class="mt-3">
+        Aucun outil de statistiques, aucun pixel publicitaire, aucun bouton de
+        réseau social n'est chargé. Votre visite n'est pas comptée.
+      </p>
+    </section>
+
+    <section>
+      <h2 class="text-[1.15rem] font-bold text-encre">Le plan d'accès</h2>
+      <p class="mt-3">
+        Le plan est servi par OpenStreetMap, qui ne dépose pas de cookie
+        publicitaire — c'est pourquoi ce site n'affiche aucun bandeau de
+        consentement. Un plan Google Maps intégré, lui, en aurait imposé un.
+        Les liens d'itinéraire vous emmènent vers un service tiers : à partir
+        du clic, ce sont les conditions de ce service qui s'appliquent.
+      </p>
+    </section>
+
+    <section>
+      <h2 class="text-[1.15rem] font-bold text-encre">Vos droits</h2>
+      <p class="mt-3">
+        Aucune donnée n'étant collectée par ce site, il n'y a rien à consulter,
+        rectifier ou supprimer. Pour toute question, le restaurant répond au
+        {" "}{business.telephone.affichage}.
+      </p>
+    </section>
+  </PageTexte>
+</Base>

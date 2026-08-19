@@ -1,0 +1,15 @@
+---
+interface Props { libelle: string; valeur: string | null }
+const { libelle, valeur } = Astro.props;
+// Un champ manquant est marqué comme tel, dans le code et à l'écran.
+---
+<div class="flex flex-wrap gap-x-3 gap-y-1 border-b border-encre/10 py-2.5">
+  <dt class="font-bold text-encre">{libelle}</dt>
+  <dd class="ml-auto text-right">
+    {valeur ?? (
+      <span class="bg-rouge/10 px-2 py-0.5 text-[0.85rem] font-bold text-rouge">
+        à fournir par le restaurant
+      </span>
+    )}
+  </dd>
+</div>

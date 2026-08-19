@@ -1,0 +1,128 @@
+---
+import { Image } from "astro:assets";
+import {
+  business, telHref, itineraireHref, adresseLigne, horairesFusionnes, libelleJours,
+} from "../data/business.mjs";
+import { plages } from "../lib/format.mjs";
+import { photos } from "../data/photos.mjs";
+
+const groupes = horairesFusionnes();
+const { latitude, longitude } = business.adresse;
+const aDesCoordonnees = latitude != null && longitude != null;
+/** OpenStreetMap ne dépose aucun cookie : pas de bandeau de consentement. */
+const osmEmbed = aDesCoordonnees
+  ? `https://www.openstreetmap.org/export/embed.html?bbox=${longitude - 0.004}%2C${latitude - 0.002}%2C${longitude + 0.004}%2C${latitude + 0.002}&layer=mapnik&marker=${latitude}%2C${longitude}`
+  : null;
+const osmLien = aDesCoordonnees
+  ? `https://www.openstreetmap.org/?mlat=${latitude}&mlon=${longitude}#map=18/${latitude}/${longitude}`
+  : `https://www.openstreetmap.org/search?query=${encodeURIComponent(adresseLigne)}`;
+---
+
+<section id="infos" class="mx-auto max-w-6xl px-5 py-14 md:px-8 md:py-24">
+  <div class="max-w-2xl" data-anim-groupe>
+    <h2 data-anim class="titre-section text-[0.72rem] text-rouge">Horaires &amp; accès</h2>
+    <p data-anim class="mt-4 text-[2rem] leading-[1.03] font-bold tracking-[-0.015em] md:text-[2.6rem]">
+      Ouvert tard, tous les jours sauf le lundi.
+    </p>
+  </div>
+
+  <div class="mt-10 grid gap-10 md:mt-14 md:grid-cols-2 md:gap-14" data-anim-groupe>
+    <div>
+      <h3 class="titre-section text-[0.65rem] text-gris">Les horaires</h3>
+      <dl class="mt-4 divide-y divide-encre/10 border-y border-encre/10">
+        {groupes.map((g) => (
+          <div class="flex items-baseline justify-between gap-4 py-3">
+            <dt class="font-bold">{libelleJours(g.jours)}</dt>
+            <dd class={`chiffres text-right ${g.plages ? "text-gris" : "text-gris-clair"}`}>
+              {plages(g.plages)}
+            </dd>
+          </div>
+        ))}
+      </dl>
+      {!business.horairesVerifies && (
+        <p class="mt-3 text-[0.8rem] leading-snug text-gris">
+          Horaires à reconfirmer auprès du restaurant : une source indique le
+          lundi ouvert. Mieux vaut appeler avant de vous déplacer ce jour-là.
+        </p>
+      )}
+
+      <h3 class="titre-section mt-9 text-[0.65rem] text-gris">Sur place, à emporter</h3>
+      <ul class="mt-4 space-y-2 text-[0.98rem]">
+        <li>{business.accueil.surPlace}</li>
+        <li>{business.accueil.aEmporter}</li>
+        <li class="text-gris">Paiement : {business.accueil.paiements.join(", ")}</li>
+      </ul>
+
+      <h3 class="titre-section mt-9 text-[0.65rem] text-gris">Y venir</h3>
+      <ul class="mt-4 space-y-3">
+        {business.acces.map((a) => (
+          <li>
+            <p class="font-bold">{a.titre}</p>
+            <p class="text-[0.92rem] leading-snug text-gris">{a.detail}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    <div>
+      <h3 class="titre-section text-[0.65rem] text-gris">L'adresse</h3>
+      <address class="mt-4 text-[1.15rem] leading-snug font-bold not-italic">
+        {business.raisonSociale}<br />
+        {business.adresse.rue}<br />
+        {business.adresse.codePostal} {business.adresse.ville}
+      </address>
+
+      <div class="mt-5 flex flex-wrap gap-3">
+        <a
+          href={telHref}
+          class="inline-flex min-h-[3rem] items-center bg-rouge px-6 font-bold text-os transition-transform duration-150 hover:-translate-y-0.5"
+        >
+          {business.telephone.affichage}
+        </a>
+        <a
+          href={itineraireHref}
+          class="inline-flex min-h-[3rem] items-center border-2 border-encre px-6 font-bold transition-colors duration-150 hover:bg-encre hover:text-os"
+        >
+          Itinéraire
+        </a>
+      </div>
+
+      <!-- Le lien de secours est placé HORS du cadre : une iframe refusée peint
+           sa propre page d'erreur opaque par-dessus tout ce qu'on mettrait
+           derrière, et le blocage est indétectable depuis le script. -->
+      <div class="mt-6">
+        {osmEmbed ? (
+          <iframe
+            src={osmEmbed}
+            title={`Plan d'accès à ${business.nom}, ${adresseLigne}`}
+            loading="lazy"
+            class="aspect-[4/3] w-full border border-encre/10 bg-os"
+          ></iframe>
+        ) : (
+          <figure class="border border-encre/10">
+            <Image
+              src={photos.devanture.src}
+              alt={photos.devanture.alt}
+              widths={[390, 780]}
+              sizes="(min-width: 48rem) 46vw, 100vw"
+              format="webp"
+              quality={72}
+              loading="lazy"
+              class="aspect-[16/9] w-full object-cover"
+            />
+            <figcaption class="bg-os-pur px-4 py-3 text-[0.85rem] leading-snug text-gris">
+              La devanture, pour la reconnaître depuis le trottoir. Le plan
+              interactif sera ajouté dès que les coordonnées GPS exactes du
+              restaurant nous auront été communiquées.
+            </figcaption>
+          </figure>
+        )}
+        <p class="mt-3 text-[0.85rem]">
+          <a href={osmLien} rel="noopener" class="inline-flex min-h-11 items-center text-rouge underline underline-offset-4">
+            Ouvrir le plan sur OpenStreetMap
+          </a>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>

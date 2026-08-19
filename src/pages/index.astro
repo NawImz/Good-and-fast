@@ -1,0 +1,29 @@
+---
+import Base from "../layouts/Base.astro";
+import Entete from "../components/Entete.astro";
+import Hero from "../components/Hero.astro";
+import Signature from "../components/Signature.astro";
+import Chrono from "../components/Chrono.astro";
+import Carte from "../components/Carte.astro";
+import Avis from "../components/Avis.astro";
+import Infos from "../components/Infos.astro";
+import PiedDePage from "../components/PiedDePage.astro";
+import BarreAppel from "../components/BarreAppel.astro";
+---
+
+<Base
+  titre="Good & Fast — fast food halal à Épinay-sur-Seine"
+  description="Kebab, tacos, cheese naan et pizzas halal à Épinay-sur-Seine (93800). Viande coupée à la commande, de 2,50 € à 9 €, ouvert jusqu'à minuit."
+>
+  <Entete />
+  <main>
+    <Hero />
+    <Signature />
+    <Chrono />
+    <Carte />
+    <Avis />
+    <Infos />
+  </main>
+  <PiedDePage />
+  <BarreAppel />
+</Base>
